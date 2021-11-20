@@ -120,7 +120,9 @@ void AInventoryCharacter::PickUpItem(FName Name, int32 Count)
 
 	//NewItemObject->SetItemData();
 
-	Inventory->AddItemAvailableSlot(Name,Count);
+	UE_LOG(LogTemp, Warning, TEXT("PickUpItem %s"), *Name.ToString());
+
+	Inventory->AddItem(Name,Count);
 }
 
 

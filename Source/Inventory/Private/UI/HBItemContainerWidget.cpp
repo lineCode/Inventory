@@ -79,7 +79,7 @@ void UHBItemContainerWidget::RefreshContainerWidget()
 
 	for (size_t i = 0; i < Items.Num(); i++)
 	{
-		FIntPoint Index = Items[i].GetItemIndex();
+		FIntPoint Index = Items[i].GetIndex();
 		//SlotContainers[Index.X][Index.Y]->SetItemData(Items[i]->GetData());
 	}
 

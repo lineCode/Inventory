@@ -62,6 +62,7 @@ public:
 	UTexture2D* GetIcon();
 	FName GetName();
 	int32 GetCount();
+	void SetCount(int32 NewCount);
 	int32 GetStackSize();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

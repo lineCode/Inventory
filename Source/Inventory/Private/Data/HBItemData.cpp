@@ -79,6 +79,11 @@ int32 FItemData::GetCount()
 	return Count;
 }
 
+void FItemData::SetCount(int32 NewCount)
+{
+	Count = NewCount;
+}
+
 int32 FItemData::GetStackSize()
 {
 	return Data.StackSize;

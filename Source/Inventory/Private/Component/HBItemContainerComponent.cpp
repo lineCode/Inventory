@@ -58,8 +58,29 @@ void UHBItemContainerComponent::SetContainerSize(FIntPoint NewSize)
 }
 
 
-bool UHBItemContainerComponent::AddItem(FItemData Item)
+bool UHBItemContainerComponent::IncreaseItemCountAtSlot(FIntPoint Index, int32 CountToAdd)
 {
+	FItemData* Item = FindItemAtIndex(Index);
+
+	int32 OldCount = Item->GetCount();
+	Item->SetCount(OldCount + CountToAdd);
+
+	return false;
+}
+
+bool UHBItemContainerComponent::AddItem(FName ItemName, int32 Count)
+{
+	FItemDataRow* ItemDataRow = ItemDatabase->FindRow<FItemDataRow>(ItemName, "");
+
+	if (!ItemDataRow)
+	{
+		return false;
+	}
+
+	FItemData Item;
+	Item.Data = *ItemDataRow;
+	Item.Count = Count;
+
 	if (Item.Data.CanStackable)
 	{
 		return AddItemAsStackable(Item);
@@ -82,12 +103,14 @@ bool UHBItemContainerComponent::AddItemAsStackable(FItemData Item)
 		if (ItemCountForTheSlot<=0)
 		{
 			//Icrease  SSlotTuple.Key indexed Count(RemainItemCount)
+			IncreaseItemCountAtSlot(SlotTuple.Key, RemainItemCount);
 			RemainItemCount -= RemainItemCount;
 			break;
 		}
 		else
 		{
 			//Icrease SlotTuple.Key indexed count(SlotTuple.Value)
+			IncreaseItemCountAtSlot(SlotTuple.Key, SlotTuple.Value);
 			RemainItemCount -= SlotTuple.Value;
 		}
 	}
@@ -97,12 +120,12 @@ bool UHBItemContainerComponent::AddItemAsStackable(FItemData Item)
 		Item.Count = RemainItemCount;
 		AddItemAsNonStackable(Item);
 	}
-
+	return true;
 }
 
 bool UHBItemContainerComponent::AddItemAsNonStackable(FItemData Item)
 {
-
+	AddItemAvailableSlot(Item);
 	return false;
 }
 
@@ -142,20 +165,9 @@ void UHBItemContainerComponent::MoveItem(FIntPoint OldIndex, FIntPoint NewIndex)
 	}
 }
 
-bool UHBItemContainerComponent::AddItemAvailableSlot(FName ItemName, int32 Count)
+bool UHBItemContainerComponent::AddItemAvailableSlot(FItemData ItemData)
 {
 	bool bFound;
-
-	FItemDataRow* ItemDataRow = ItemDatabase->FindRow<FItemDataRow>(ItemName, "");
-
-	if (!ItemDataRow)
-	{
-		return false;
-	}
-
-	FItemData ItemData;
-	ItemData.Data = *ItemDataRow;
-	ItemData.Count = Count;
 
 	FIntPoint FoundIndex = FindAvailableSlot(ItemData, bFound);
 	ItemData.SetIndex(FoundIndex);

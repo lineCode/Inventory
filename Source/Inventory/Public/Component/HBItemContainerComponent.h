@@ -38,7 +38,10 @@ public:
 	//HELPER FUNCTIONS
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
-		bool AddItem(FItemData Item);
+		bool IncreaseItemCountAtSlot(FIntPoint Index, int32 CountToAdd);
+
+	UFUNCTION(BlueprintCallable, Category = "Utils")
+		bool AddItem(FName ItemName, int32 Count);
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
 		bool AddItemAsStackable(FItemData Item);
@@ -59,7 +62,7 @@ public:
 		void MoveItem(FIntPoint OldIndex, FIntPoint NewIndex);
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
-		bool AddItemAvailableSlot(FName ItemName, int32 Count);
+		bool AddItemAvailableSlot(FItemData ItemData);
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
 		FIntPoint FindAvailableSlot(FItemData Item, bool& found);
@@ -67,7 +70,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Utils")
 		bool IsItemSuitableForNewIndex(FItemData Item, FIntPoint NewCoordinates);
 
-	UFUNCTION(BlueprintCallable, Category = "Utils")
 		TArray<TTuple<FIntPoint, int32>> FindFreeStackableSlots(FName Name);
 
 	//UFUNCTION(BlueprintCallable, Category = "Utils")

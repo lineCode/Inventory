@@ -61,7 +61,7 @@ bool UHBItemSlotContainerWidget::NativeOnDrop(const FGeometry& InGeometry, const
 		UE_LOG(LogTemp, Warning, TEXT("DDOperation->Item"));
 
 		FIntPoint NewIndex = GetIndex();
-		ParentContainer->GetItemContainerComponent()->MoveItem(DDOperation->ItemData.GetItemIndex(), NewIndex);
+		ParentContainer->GetItemContainerComponent()->MoveItem(DDOperation->ItemData.GetIndex(), NewIndex);
 
 		//ParentContainer->GetItemContainerComponent()->MoveItem(DDOperation->Item, SlotIndex);
 		//UE_LOG(LogTemp, Warning, TEXT("Item named %s at %s moved to %s"), *DDOperation->Item->GetData()->GetItemName().ToString(), *DDOperation->Item->GetItemCoordinates());
