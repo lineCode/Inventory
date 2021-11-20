@@ -42,6 +42,9 @@ public:
 		void OnItemAdded(FIntPoint Index);
 
 	UFUNCTION(BlueprintCallable)
+		void OnCountChanged(FIntPoint Index);
+
+	UFUNCTION(BlueprintCallable)
 		void OnSlotClicked(FIntPoint Index);
 
 	TArray<TArray<class UHBItemSlotContainerWidget*>>SlotContainers;

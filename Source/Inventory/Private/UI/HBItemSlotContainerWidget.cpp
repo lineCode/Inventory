@@ -71,19 +71,22 @@ bool UHBItemSlotContainerWidget::NativeOnDrop(const FGeometry& InGeometry, const
 	return false;
 }
 
-void UHBItemSlotContainerWidget::SetItemAmountText(int value)
+void UHBItemSlotContainerWidget::SetItemAmountText()
 {
-	if (value==0)
+
+	int32 Count = ParentContainer->ItemContainerComponent->FindItemAtIndex(Index)->GetCount();//ItemData.Count;
+
+	if (Count ==0)
 	{
 		ItemAmountText->SetVisibility(ESlateVisibility::Hidden);
 	}
 	else
 	{
 		ItemAmountText->SetVisibility(ESlateVisibility::Visible);
-		ItemAmountText->SetText(FText::AsCultureInvariant(FString::FromInt(value)));
+		ItemAmountText->SetText(FText::AsCultureInvariant(FString::FromInt(Count)));
 
-		UHBItemSlotContainerWidget* SlotContainer = WidgetTree->ConstructWidget<UHBItemSlotContainerWidget>(ItemSlotSubclass, TEXT("TEST123"));
-		MainCanvas->AddChild(SlotContainer);
+		//UHBItemSlotContainerWidget* SlotContainer = WidgetTree->ConstructWidget<UHBItemSlotContainerWidget>(ItemSlotSubclass, TEXT("TEST123"));
+		//MainCanvas->AddChild(SlotContainer);
 	}
 }
 
@@ -131,6 +134,7 @@ void UHBItemSlotContainerWidget::SetItemData(FItemData NewItemData)
 	Cast<UCanvasPanelSlot>(ItemSlot->Slot)->SetSize(FVector2D(64* Size.Y, 64* Size.X));
 	ItemSlot->SetItemIconBrush(ItemData.GetIcon());
 	OwnItemSlot = ItemSlot;
+	SetItemAmountText();
 }
 
 //UHBItemData* UHBItemSlotContainerWidget::GetItemData()

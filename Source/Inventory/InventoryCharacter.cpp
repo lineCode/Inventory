@@ -102,6 +102,7 @@ void AInventoryCharacter::InitInventory()
 
 		Inventory->OnItemAdded.AddDynamic(InventoryWidget, &UHBItemContainerWidget::OnItemAdded);
 		Inventory->OnItemDeleted.AddDynamic(InventoryWidget, &UHBItemContainerWidget::OnItemDeleted);
+		Inventory->OnItemCountChanged.AddDynamic(InventoryWidget, &UHBItemContainerWidget::OnCountChanged);
 
 		//FInputModeGameAndUI Mode;
 		//Mode.SetLockMouseToViewport(true);

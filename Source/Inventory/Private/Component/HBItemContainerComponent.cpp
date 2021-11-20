@@ -60,10 +60,14 @@ void UHBItemContainerComponent::SetContainerSize(FIntPoint NewSize)
 
 bool UHBItemContainerComponent::IncreaseItemCountAtSlot(FIntPoint Index, int32 CountToAdd)
 {
+	UE_LOG(LogTemp, Warning, TEXT("IncreaseItemCountAtSlot "));
+
 	FItemData* Item = FindItemAtIndex(Index);
 
 	int32 OldCount = Item->GetCount();
 	Item->SetCount(OldCount + CountToAdd);
+
+	OnItemCountChanged.Broadcast(Index);
 
 	return false;
 }

@@ -104,6 +104,15 @@ void UHBItemContainerWidget::OnItemAdded(FIntPoint Index)
 	SlotContainers[Index.X][Index.Y]->SetItemData(*Item);
 }
 
+void UHBItemContainerWidget::OnCountChanged(FIntPoint Index)
+{
+	FItemData* Item = ItemContainerComponent->FindItemAtIndex(Index);
+
+	SlotContainers[Index.X][Index.Y]->SetItemAmountText();
+}
+
+
+
 
 void UHBItemContainerWidget::OnSlotClicked(FIntPoint Index)
 {

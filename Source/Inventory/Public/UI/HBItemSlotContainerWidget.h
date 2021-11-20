@@ -40,7 +40,7 @@ public:
 
 
 	UFUNCTION(BlueprintCallable)
-		void SetItemAmountText(int value);
+		void SetItemAmountText(); // Change as refreshh
 
 	UFUNCTION(BlueprintCallable)
 		void SetItemIconBrush();

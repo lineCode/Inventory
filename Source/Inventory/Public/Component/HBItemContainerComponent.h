@@ -96,6 +96,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 		FItemSlotChangedDelegate OnItemAdded;
 
+	UPROPERTY(BlueprintAssignable)
+		FItemSlotChangedDelegate OnItemCountChanged;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UDataTable* ItemDatabase;
 
