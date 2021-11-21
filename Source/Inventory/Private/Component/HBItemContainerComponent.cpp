@@ -81,11 +81,11 @@ bool UHBItemContainerComponent::AddItem(FName ItemName, int32 Count)
 		return false;
 	}
 
-	FItemData Item;
-	Item.Data = *ItemDataRow;
-	Item.Count = Count;
+	FItemData* Item = new FItemData(); /// TODO ?
+	Item->Data = *ItemDataRow;
+	Item->Count = Count;
 
-	if (Item.Data.CanStackable)
+	if (Item->Data.CanStackable)
 	{
 		return AddItemAsStackable(Item);
 	}
@@ -95,11 +95,11 @@ bool UHBItemContainerComponent::AddItem(FName ItemName, int32 Count)
 	}
 }
 
-bool UHBItemContainerComponent::AddItemAsStackable(FItemData Item)
+bool UHBItemContainerComponent::AddItemAsStackable(FItemData* Item)
 {
-	TArray<TTuple<FIntPoint, int32>> FreeStackableSlots = FindFreeStackableSlots(Item.GetName());
+	TArray<TTuple<FIntPoint, int32>> FreeStackableSlots = FindFreeStackableSlots(Item->GetName());
 
-	int32 RemainItemCount = Item.GetCount();
+	int32 RemainItemCount = Item->GetCount();
 
 	for (TTuple<FIntPoint, int32> SlotTuple : FreeStackableSlots)
 	{
@@ -121,22 +121,22 @@ bool UHBItemContainerComponent::AddItemAsStackable(FItemData Item)
 
 	if (RemainItemCount>0)
 	{
-		Item.Count = RemainItemCount;
+		Item->Count = RemainItemCount;
 		AddItemAsNonStackable(Item);
 	}
 	return true;
 }
 
-bool UHBItemContainerComponent::AddItemAsNonStackable(FItemData Item)
+bool UHBItemContainerComponent::AddItemAsNonStackable(FItemData* Item)
 {
 	AddItemAvailableSlot(Item);
 	return false;
 }
 
-void UHBItemContainerComponent::AddItemDirectly(FItemData ItemData, FIntPoint Index)
+void UHBItemContainerComponent::AddItemDirectly(FItemData* ItemData, FIntPoint Index)
 {
 	UE_LOG(LogExec, Warning, TEXT("UHBItemContainerComponent::AddItemDirectly Index %s"), *Index.ToString());
-	ItemData.SetIndex(Index);
+	ItemData->SetIndex(Index);
 	UE_LOG(LogExec, Warning, TEXT("UHBItemContainerComponent::AddItemDirectly 2"));
 
 	Items.Add(ItemData);
@@ -148,7 +148,7 @@ void UHBItemContainerComponent::AddItemDirectly(FItemData ItemData, FIntPoint In
 void UHBItemContainerComponent::DeleteItemAtIndex(FIntPoint Index)
 {
 	//UHBItemObject* Item = FindItemAtIndex(Index);
-	FItemData ItemData;//TODO
+	FItemData* ItemData;//TODO
 	Items.Remove(ItemData);
 	OnItemDeleted.Broadcast(Index);
 	//InventoryHasChanged.Broadcast(); //call delegate container updated
@@ -169,12 +169,12 @@ void UHBItemContainerComponent::MoveItem(FIntPoint OldIndex, FIntPoint NewIndex)
 	}
 }
 
-bool UHBItemContainerComponent::AddItemAvailableSlot(FItemData ItemData)
+bool UHBItemContainerComponent::AddItemAvailableSlot(FItemData* ItemData)
 {
 	bool bFound;
 
-	FIntPoint FoundIndex = FindAvailableSlot(ItemData, bFound);
-	ItemData.SetIndex(FoundIndex);
+	FIntPoint FoundIndex = FindAvailableSlot(*ItemData, bFound);
+	ItemData->SetIndex(FoundIndex);
 
 
 	//UHBItemObject* NewItem = NewObject<UHBItemObject>(this, UHBItemObject::StaticClass());
@@ -237,15 +237,15 @@ TArray<TTuple<FIntPoint,int32>> UHBItemContainerComponent::FindFreeStackableSlot
 {
 	TArray<TTuple<FIntPoint, int32>> FreeSlots;
 
-	for (FItemData Item : Items)
+	for (FItemData* Item : Items)
 	{
-		if (Item.GetName() == Name)
+		if (Item->GetName() == Name)
 		{
-			int FreeStackCount = Item.GetStackSize() - Item.GetCount();
+			int FreeStackCount = Item->GetStackSize() - Item->GetCount();
 			
 			if (FreeStackCount > 0)
 			{
-				FreeSlots.Add(TTuple<FIntPoint, int32>(Item.GetIndex(),FreeStackCount));
+				FreeSlots.Add(TTuple<FIntPoint, int32>(Item->GetIndex(),FreeStackCount));
 			}
 
 		}
@@ -259,9 +259,9 @@ FItemData* UHBItemContainerComponent::FindItemAtIndex(FIntPoint Index)
 
 	for (size_t i = 0; i < Items.Num(); i++)
 	{
-		if (Items[i].GetIndex() == Index)
+		if (Items[i]->GetIndex() == Index)
 		{
-			return &Items[i];
+			return Items[i];
 		}
 	}
 	return nullptr;
@@ -288,14 +288,14 @@ TArray<TArray<bool>> UHBItemContainerComponent::GetAvailableSlots()
 		AvailableSlots.Add(Row);
 	}
 
-	TArray<FItemData> ItemInContainer = GetItems();
+	TArray<FItemData*> ItemInContainer = GetItems();
 
 	for (size_t i = 0; i < ItemInContainer.Num(); i++)
 	{
-		FItemData ItemObj = ItemInContainer[i];
+		FItemData* Item = ItemInContainer[i];
 
 		
-		TArray<FIntPoint> ItemCoordinates = ItemObj.GetItemCoordinates();
+		TArray<FIntPoint> ItemCoordinates = Item->GetItemCoordinates();
 
 		for (FIntPoint Coordinate : ItemCoordinates)
 		{
@@ -309,7 +309,7 @@ TArray<TArray<bool>> UHBItemContainerComponent::GetAvailableSlots()
 	return AvailableSlots;
 }
 
-TArray<FItemData> UHBItemContainerComponent::GetItems()
+TArray<FItemData*> UHBItemContainerComponent::GetItems()
 {
 	return Items;
 }

@@ -71,12 +71,19 @@ bool UHBItemSlotContainerWidget::NativeOnDrop(const FGeometry& InGeometry, const
 	return false;
 }
 
-void UHBItemSlotContainerWidget::SetItemAmountText()
+void UHBItemSlotContainerWidget::RefreshItemCountText()
 {
+	UE_LOG(LogTemp, Warning, TEXT("UHBItemSlotContainerWidget::SetItemAmountText"));
+	FItemData* Item = ParentContainer->ItemContainerComponent->FindItemAtIndex(Index);
 
-	int32 Count = ParentContainer->ItemContainerComponent->FindItemAtIndex(Index)->GetCount();//ItemData.Count;
+	int32 Count__ = Item->GetCount();//ItemData.Count;
+	SetItemCountText(Count__);
+}
 
-	if (Count ==0)
+void UHBItemSlotContainerWidget::SetItemCountText(int32 Count)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Count %d"), Count);
+	if (Count <= 1)
 	{
 		ItemAmountText->SetVisibility(ESlateVisibility::Hidden);
 	}
@@ -114,16 +121,19 @@ void UHBItemSlotContainerWidget::SetSlotEmpty(bool empty)
 
 void UHBItemSlotContainerWidget::SetItemData(FItemData NewItemData)
 {
+	ItemData = NewItemData;
+
 	if (NewItemData.Count <=0 )
 	{
 		if (OwnItemSlot)
 		{
 			OwnItemSlot->RemoveFromParent();
 		}
+		UE_LOG(LogTemp, Warning, TEXT("DDOperation->Item"));
+		SetItemCountText(0);
 		return;
 	}
 
-	ItemData = NewItemData;
 
 
 	UHBItemSlotWidget* ItemSlot = WidgetTree->ConstructWidget<UHBItemSlotWidget>(ItemSlotSubclass, TEXT("TEST123"));
@@ -134,7 +144,7 @@ void UHBItemSlotContainerWidget::SetItemData(FItemData NewItemData)
 	Cast<UCanvasPanelSlot>(ItemSlot->Slot)->SetSize(FVector2D(64* Size.Y, 64* Size.X));
 	ItemSlot->SetItemIconBrush(ItemData.GetIcon());
 	OwnItemSlot = ItemSlot;
-	SetItemAmountText();
+	SetItemCountText(ItemData.GetCount());
 }
 
 //UHBItemData* UHBItemSlotContainerWidget::GetItemData()

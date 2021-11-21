@@ -75,11 +75,11 @@ void UHBItemContainerWidget::RefreshContainerWidget()
 	int sizeY = ItemContainerComponent->GetContainerSize().Y;
 
 
-	TArray<FItemData> Items = ItemContainerComponent->GetItems();
+	TArray<FItemData*> Items = ItemContainerComponent->GetItems();
 
 	for (size_t i = 0; i < Items.Num(); i++)
 	{
-		FIntPoint Index = Items[i].GetIndex();
+		FIntPoint Index = Items[i]->GetIndex();
 		//SlotContainers[Index.X][Index.Y]->SetItemData(Items[i]->GetData());
 	}
 
@@ -108,7 +108,7 @@ void UHBItemContainerWidget::OnCountChanged(FIntPoint Index)
 {
 	FItemData* Item = ItemContainerComponent->FindItemAtIndex(Index);
 
-	SlotContainers[Index.X][Index.Y]->SetItemAmountText();
+	SlotContainers[Index.X][Index.Y]->RefreshItemCountText();
 }
 
 

@@ -12,12 +12,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemSlotChangedDelegate, FIntPoint,
 
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class UHBItemContainerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UHBItemContainerComponent();
 
@@ -25,10 +25,10 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	
+
 	UFUNCTION(BlueprintCallable, Category = "Utils")
 		void SetContainerSize(FIntPoint NewSize);
 
@@ -43,14 +43,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Utils")
 		bool AddItem(FName ItemName, int32 Count);
 
-	UFUNCTION(BlueprintCallable, Category = "Utils")
-		bool AddItemAsStackable(FItemData Item);
+	//UFUNCTION(BlueprintCallable, Category = "Utils")
+		bool AddItemAsStackable(FItemData* Item);
 
-	UFUNCTION(BlueprintCallable, Category = "Utils")
-		bool AddItemAsNonStackable(FItemData Item);
+	//UFUNCTION(BlueprintCallable, Category = "Utils")
+		bool AddItemAsNonStackable(FItemData* Item);
 
-	UFUNCTION(BlueprintCallable, Category = "Utils")
-		void AddItemDirectly(FItemData ItemData, FIntPoint Index);
+	//UFUNCTION(BlueprintCallable, Category = "Utils")
+		void AddItemDirectly(FItemData* ItemData, FIntPoint Index);
 
 	//UFUNCTION(BlueprintCallable, Category = "Utils")
 	//	void AddItemDirectly(FItemData ItemData, FIntPoint Index);
@@ -61,8 +61,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Utils")
 		void MoveItem(FIntPoint OldIndex, FIntPoint NewIndex);
 
-	UFUNCTION(BlueprintCallable, Category = "Utils")
-		bool AddItemAvailableSlot(FItemData ItemData);
+	//UFUNCTION(BlueprintCallable, Category = "Utils")
+		bool AddItemAvailableSlot(FItemData* ItemData);
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
 		FIntPoint FindAvailableSlot(FItemData Item, bool& found);
@@ -70,19 +70,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Utils")
 		bool IsItemSuitableForNewIndex(FItemData Item, FIntPoint NewCoordinates);
 
-		TArray<TTuple<FIntPoint, int32>> FindFreeStackableSlots(FName Name);
+	TArray<TTuple<FIntPoint, int32>> FindFreeStackableSlots(FName Name);
 
 	//UFUNCTION(BlueprintCallable, Category = "Utils")
-		FItemData* FindItemAtIndex(FIntPoint Index);
+	FItemData* FindItemAtIndex(FIntPoint Index);
 
 	//UFUNCTION()
-		TArray<TArray<bool>> GetAvailableSlots();
+	TArray<TArray<bool>> GetAvailableSlots();
 
 	//UFUNCTION(BlueprintCallable, Category = "Utils")
 	//	bool IsSlotEmptyAtIndex(int x, int y);
 
-	UFUNCTION(BlueprintCallable, Category = "Utils")
-		TArray<FItemData> GetItems();
+	TArray<FItemData*> GetItems();
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
 		FIntPoint GetContainerSize();
@@ -102,8 +101,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UDataTable* ItemDatabase;
 
-	TArray<FItemData> Items;
-		
+	TArray<FItemData*> Items;
+
 	FItemData GetItemDataByNameDatabase(FName Name);
 
 	FIntPoint ContainerSize;
