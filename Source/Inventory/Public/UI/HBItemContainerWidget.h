@@ -21,8 +21,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 		class UUniformGridPanel* SlotGrid = nullptr;
 
-	TSubclassOf<class UHBItemSlotWidget> ItemSlotSubclass;
-	TSubclassOf<class UHBItemSlotContainerWidget> ItemSlotBGSubclass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<class UHBItemSlotWidget> ItemSlotBGSubclass;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -47,7 +47,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void OnSlotClicked(FIntPoint Index);
 
-	TArray<TArray<class UHBItemSlotContainerWidget*>>SlotContainers;
+	TArray<TArray<class UHBItemSlotWidget*>>SlotContainers;
 
 
 	UFUNCTION(BlueprintCallable)

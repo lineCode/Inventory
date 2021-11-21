@@ -7,16 +7,11 @@
 #include "Components/Image.h"
 #include "Component/HBItemContainerComponent.h"
 #include "UI/HBItemSlotWidget.h"
-#include "UI/HBItemSlotContainerWidget.h"
 #include "Blueprint/WidgetTree.h"
 #include "Data/HBItemData.h"
 
 UHBItemContainerWidget::UHBItemContainerWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	static ConstructorHelpers::FClassFinder<UHBItemSlotWidget> ItemSlotBP(TEXT("WidgetBlueprint'/Game/Demo_/ItemSlotWidget.ItemSlotWidget_C'"));
-	static ConstructorHelpers::FClassFinder<UUserWidget> ItemSlotBGBP(TEXT("WidgetBlueprint'/Game/Demo_/ItemSlotBackGround.ItemSlotBackGround_C'"));
-	ItemSlotSubclass = ItemSlotBP.Class;
-	ItemSlotBGSubclass = ItemSlotBGBP.Class;
 }
 
 void UHBItemContainerWidget::NativeConstruct()
@@ -44,7 +39,7 @@ void UHBItemContainerWidget::InitContainer(UHBItemContainerComponent* _ItemConta
 
 	for (size_t i = 0; i < ItemContainerComponent->GetContainerSize().X; i++)
 	{
-		TArray<class UHBItemSlotContainerWidget*>SlotContainersRow;
+		TArray<class UHBItemSlotWidget*>SlotContainersRow;
 		for (size_t j = 0; j < ItemContainerComponent->GetContainerSize().Y; j++)
 		{
 			FString Base = "DragabbleItemSlot";
@@ -54,7 +49,7 @@ void UHBItemContainerWidget::InitContainer(UHBItemContainerComponent* _ItemConta
 
 			//UHBItemSlotWidget* HBItemSlotWidget = CreateWidget<UHBItemSlotWidget>(this, UHBItemSlotWidget::StaticClass());
 			//UHBItemSlotWidget* HBItemSlotWidget = WidgetTree->ConstructWidget<UHBItemSlotWidget>(ItemSlotSubclass, FName(*Base)); // The second parameter is the name and is optional.
-			UHBItemSlotContainerWidget* SlotContainer = WidgetTree->ConstructWidget<UHBItemSlotContainerWidget>(ItemSlotBGSubclass, FName(*Base)/*TEXT("Image")*/); // The second parameter is the name and is optional.
+			UHBItemSlotWidget* SlotContainer = WidgetTree->ConstructWidget<UHBItemSlotWidget>(ItemSlotBGSubclass, FName(*Base)/*TEXT("Image")*/); // The second parameter is the name and is optional.
 			SlotContainer->OnSlotClicked.AddDynamic(this, &UHBItemContainerWidget::OnSlotClicked);
 			SlotContainer->ParentContainer = this;
 			//HBItemSlotWidget->

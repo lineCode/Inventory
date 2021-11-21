@@ -4,64 +4,79 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Data/HBItemData.h"
 #include "HBItemSlotWidget.generated.h"
 
 /**
  * 
  */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSlotDelegate, FIntPoint, Index);
+
 UCLASS(Blueprintable, BlueprintType, ClassGroup = UI)
-class UHBItemSlotWidget : public UUserWidget
+class INVENTORY_API UHBItemSlotWidget : public UUserWidget
 {
 	GENERATED_BODY()
+	
 public:
 
-	virtual void NativeConstruct() override;
 	UHBItemSlotWidget(const FObjectInitializer& ObjectInitializer);
+	virtual void NativeConstruct() override;
+
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
+	
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+		class UImage* BackgroundImage = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-		class UImage* ItemThumbnailImage = nullptr;
+		class UTextBlock* ItemAmountText = nullptr;
 
-
-
-	UFUNCTION()
-		void testFunc();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+		class UCanvasPanel* MainCanvas = nullptr;
 
 
 	UFUNCTION(BlueprintCallable)
-		void SetItemIconBrush(UTexture2D* Texture);
+		void RefreshItemCountText(); // Change as refreshh
+	
+	UFUNCTION(BlueprintCallable)
+		void SetItemCountText(int32 Count);
 
+	UFUNCTION(BlueprintCallable)
+		void SetItemIconBrush();
 
-	//DATA
-	//UPROPERTY(BlueprintReadWrite, Meta = (ExposeOnSpawn = "true"))
-		//FInventoryItem Item;
-	//UPROPERTY(BlueprintReadWrite, Meta = (ExposeOnSpawn = "true"))
-		//FInventoryItemData ItemData;
-	UPROPERTY(BlueprintReadWrite, Meta = (ExposeOnSpawn = "true"))
-		int SlotIndex;
+	UFUNCTION(BlueprintCallable)
+		void SetSlotEmpty(bool empty);
 
+	UFUNCTION(BlueprintCallable)
+		void SetItemData(FItemData NewItemObject);
 
-	/*virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
-	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	////UFUNCTION(BlueprintCallable)
+	////	UHBItemData* GetItemData();
 
+	UFUNCTION(BlueprintCallable)
+		FItemData GetItemData();
 
+	void SetIndex(int x, int y);
+	FIntPoint GetIndex();
 
-	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-	virtual FReply NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
-		*/
+	void OnClick();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn))
-		FKey DetectDragKey;
+	FSlotDelegate OnSlotClicked;
 
-	class UHBItemSlotContainerWidget* ParentWidget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FIntPoint IconScale = { 64,64 }; //TODO will be dynamic may be ui scale
 
-public:
+	class UHBItemContainerWidget* ParentContainer;
 
-	void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
+	FIntPoint Index;
+	FItemData ItemData;
+	class UHBItemVisualWidget* ChildItemVisual;
 
-
-
-protected:
-	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<class UHBItemVisualWidget> ItemVisualSubclass;
 
 };
