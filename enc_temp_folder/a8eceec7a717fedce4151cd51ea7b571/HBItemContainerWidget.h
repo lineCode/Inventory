@@ -48,7 +48,6 @@ public:
 		void OnSlotClicked(FIntPoint Index);
 
 	class UHBItemSlotWidget* GetItemSlotAtCoordinate(FIntPoint Coordinate);
-	class UHBItemSlotWidget* GetItemSlotAtCoordinateOffset(FIntPoint Coordinate, FIntPoint Offset);
 	class UHBItemSlotWidget* GetItemSlotAtCoordinateRight(FIntPoint Coordinate, int32 Amount);
 	class UHBItemSlotWidget* GetItemSlotAtCoordinateLeft(FIntPoint Coordinate, int32 Amount);
 	class UHBItemSlotWidget* GetItemSlotAtCoordinateUp(FIntPoint Coordinate, int32 Amount);

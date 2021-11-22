@@ -28,6 +28,11 @@ public:
 	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
+	virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
+
+
+
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 		class UImage* BackgroundImage = nullptr;
@@ -38,6 +43,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 		class UCanvasPanel* MainCanvas = nullptr;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UTexture2D* DefaultBG = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UTexture2D* DragBG = nullptr;
+
+	void SetToDragState();
+
+	void SetToDefaultState();
 
 	UFUNCTION(BlueprintCallable)
 		void RefreshItemCountText(); // Change as refreshh

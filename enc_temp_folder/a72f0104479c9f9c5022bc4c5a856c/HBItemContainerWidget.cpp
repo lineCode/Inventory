@@ -134,12 +134,6 @@ UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinate(FIntPoint Coo
 	return ItemSlots[Coordinate.X][Coordinate.Y];
 }
 
-UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateOffset(FIntPoint Coordinate, FIntPoint Offset)
-{
-	Coordinate += Offset;
-	return GetItemSlotAtCoordinate(Coordinate);
-}
-
 UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateRight(FIntPoint Coordinate, int32 Amount = 1)
 {
 	Coordinate.Y += Amount;
@@ -166,18 +160,15 @@ UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateDown(FIntPoint
 
 void UHBItemContainerWidget::MarkSlots(FIntPoint Coordinate , FIntPoint Size)
 {
-	for (size_t X = 0; X < Size.X; X++)
+	for (size_t i = 0; i < Size.X; i++)
 	{
-		for (size_t Y = 0; Y < Size.Y; Y++)
+		UHBItemSlotWidget* DownSlot = GetItemSlotAtCoordinateDown(Coordinate,i);
+		if (DownSlot)
 		{
-			UHBItemSlotWidget* OffSlot = GetItemSlotAtCoordinateOffset(Coordinate, FIntPoint(X,Y));
-			if (OffSlot)
-			{
-				//UE_LOG(LogTemp, Warning, TEXT("MarkSlots %d"), i);
-				OffSlot->SetToDragState();
-				DirtMarkedSlots.Add(OffSlot);
-			}
-		}		
+			UE_LOG(LogTemp, Warning, TEXT("MarkSlots %d"), i);
+			DownSlot->SetToDragState();
+			DirtMarkedSlots.Add(DownSlot);
+		}
 	}
 
 

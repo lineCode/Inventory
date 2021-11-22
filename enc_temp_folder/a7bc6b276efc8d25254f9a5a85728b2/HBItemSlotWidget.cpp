@@ -51,7 +51,7 @@ void UHBItemSlotWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FP
 bool UHBItemSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
-	ParentContainer->ClearMarkedSlots();
+	//SetToDefaultState();
 
 	UHBItemDragDropOperation* DDOperation = Cast<UHBItemDragDropOperation>(InOperation);
 
