@@ -109,4 +109,5 @@ public:
 
 	TArray<TArray<bool>> AvailableSlots;
 	bool AvailableSlotsIsDirty = true;
+
 };

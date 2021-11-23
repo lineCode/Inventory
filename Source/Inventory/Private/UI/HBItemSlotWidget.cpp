@@ -13,6 +13,9 @@
 #include "Components/CanvasPanelSlot.h"
 #include "HBItemObject.h"
 #include "Component/HBItemContainerComponent.h"
+#include "Manager/HBSoundManager.h"
+#include "Main/HBGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 
 UHBItemSlotWidget::UHBItemSlotWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -52,6 +55,9 @@ bool UHBItemSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 	ParentContainer->ClearMarkedSlots();
+	//UHBSoundManager::DoSomething(GetWorld());
+
+	
 
 	UHBItemDragDropOperation* DDOperation = Cast<UHBItemDragDropOperation>(InOperation);
 
@@ -61,7 +67,7 @@ bool UHBItemSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
 
 		FIntPoint NewIndex = GetIndex();
 		ParentContainer->GetItemContainerComponent()->MoveItem(DDOperation->ItemData.GetIndex(), NewIndex);
-
+		Cast<UHBGameInstance>(GetGameInstance())->GetSoundManager()->PlayDropSound(DDOperation->ItemData.GetItemType());
 		//ParentContainer->GetItemContainerComponent()->MoveItem(DDOperation->Item, SlotIndex);
 		//UE_LOG(LogTemp, Warning, TEXT("Item named %s at %s moved to %s"), *DDOperation->Item->GetData()->GetItemName().ToString(), *DDOperation->Item->GetItemCoordinates());
 		//*DDOperation->Item->GetData()->GetItemName(), * DDOperation->Item->GetItemCoordinates(), * SlotIndex->ToString()

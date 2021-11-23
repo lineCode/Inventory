@@ -43,6 +43,8 @@ void UHBItemVisualWidget::NativeOnDragDetected(const FGeometry& InGeometry, cons
 	{
 		FItemData ItemData = GetData();
 		//UGameplayStatics::PlaySound2D(GetWorld(), ParentWidget->ParentContainer->Sound, 1, 1);
+
+
 		OutOperation = Cast<UHBItemDragDropOperation>(UWidgetBlueprintLibrary::CreateDragDropOperation(UHBItemDragDropOperation::StaticClass()));
 		OutOperation->DefaultDragVisual = ItemDragVisual;
 		OutOperation->Pivot = EDragPivot::CenterCenter;

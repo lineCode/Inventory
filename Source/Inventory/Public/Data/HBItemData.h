@@ -7,6 +7,28 @@
 #include "HBItemData.generated.h"
 
 
+//UENUM()
+//enum ItemType
+//{
+//	Default  UMETA(DisplayName = "Default"),
+//	Armor    UMETA(DisplayName = "Armor"),
+//	Sword    UMETA(DisplayName = "Sword"),
+//	Bow		 UMETA(DisplayName = "Bow")
+//};
+
+UENUM(BlueprintType)
+namespace EItemType
+{
+	enum Type
+	{
+		Default			UMETA(DisplayName = "Default"),
+		Armor			UMETA(DisplayName = "Armor"),
+		Sword			UMETA(DisplayName = "Sword"),
+		Bow				UMETA(DisplayName = "Bow")
+	};
+}
+
+
 USTRUCT(BlueprintType)
 struct INVENTORY_API FItemDataRow : public FTableRowBase
 {
@@ -39,6 +61,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int StackSize = 1;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//	ItemType ItemType = ItemType::Default;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TEnumAsByte<EItemType::Type> ItemType;
+
 	bool operator==(const FItemDataRow& OtherItem) const
 	{
 		if (Name == OtherItem.Name)
@@ -64,6 +91,8 @@ public:
 	int32 GetCount();
 	void SetCount(int32 NewCount);
 	int32 GetStackSize();
+	TEnumAsByte<EItemType::Type> GetItemType();
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FIntPoint Index;

@@ -88,3 +88,8 @@ int32 FItemData::GetStackSize()
 {
 	return Data.StackSize;
 }
+
+TEnumAsByte<EItemType::Type> FItemData::GetItemType()
+{
+	return Data.ItemType;
+}
