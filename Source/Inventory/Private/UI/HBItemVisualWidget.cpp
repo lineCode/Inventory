@@ -8,6 +8,8 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Data/HBItemData.h"
 #include "Components/Image.h"
+#include "Manager/HBSoundManager.h"
+#include "Main/HBGameInstance.h"
 
 void UHBItemVisualWidget::SetParentSlot(class UHBItemSlotWidget* NewParentSlot)
 {
@@ -27,15 +29,21 @@ void UHBItemVisualWidget::SetItemIconBrush(UTexture2D* Texture)
 FReply UHBItemVisualWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	UE_LOG(LogTemp, Warning, TEXT("draggable NativeOnMouseButtonDown"));
-	Super::OnMouseButtonDown(InGeometry, InMouseEvent).NativeReply;
-
+	Super::OnMouseButtonDown(InGeometry, InMouseEvent);
+	Cast<UHBGameInstance>(GetGameInstance())->GetSoundManager()->PlayPickSound();
 	return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
+}
+FReply UHBItemVisualWidget::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
+	UE_LOG(LogTemp, Warning, TEXT("draggable NativeOnMouseButtonUp"));
+	return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::RightMouseButton).NativeReply;
 }
 
 void UHBItemVisualWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
 	Super::OnDragDetected(InGeometry, InMouseEvent, OutOperation);
-
+	UE_LOG(LogTemp, Error, TEXT("Drag Operations"));
 	//TSubclassOf<UHBItemDragVisual> ClassOfItemDragVisual = LoadClass<UHBItemDragVisual>(NULL, TEXT("WidgetBlueprint'/Game/Demo_/WItemDragVisual.WItemDragVisual_C'"));
 	UHBItemDragVisual* ItemDragVisual = CreateWidget<UHBItemDragVisual>(GetWorld(), ClassOfItemDragVisual);
 
@@ -56,3 +64,5 @@ void UHBItemVisualWidget::NativeOnDragDetected(const FGeometry& InGeometry, cons
 		ItemDragVisual->Initialize();
 	}
 }
+
+

@@ -36,3 +36,9 @@ void AHBSoundManager::PlayDropSound(TEnumAsByte<EItemType::Type>  ItemType)
 	if(SoundToPlay)
 	UGameplayStatics::PlaySound2D(GetWorld(), SoundToPlay, 1, 1);
 }
+
+void AHBSoundManager::PlayPickSound()
+{
+	check(GenericPickSound);
+	UGameplayStatics::PlaySound2D(GetWorld(), GenericPickSound, 1, 1);
+}

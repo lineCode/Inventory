@@ -35,7 +35,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		USoundWave* BowDrop = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		USoundWave* GenericPickSound = nullptr;
+
 	void PlayDropSound(TEnumAsByte<EItemType::Type>  ItemType);
+	void PlayPickSound();
 
 	//static USoundCue* ItemAudioCue;
 	
