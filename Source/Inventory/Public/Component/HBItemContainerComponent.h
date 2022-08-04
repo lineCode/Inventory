@@ -41,28 +41,23 @@ public:
 		bool IncreaseItemCountAtSlot(FIntPoint Index, int32 CountToAdd);
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
-		bool AddItem(FName ItemName, int32 Count);
-
-	//UFUNCTION(BlueprintCallable, Category = "Utils")
-		bool AddItemAsStackable(FItemData* Item);
-
-	//UFUNCTION(BlueprintCallable, Category = "Utils")
-		bool AddItemAsNonStackable(FItemData* Item);
-
-	//UFUNCTION(BlueprintCallable, Category = "Utils")
-		void AddItemDirectly(FItemData* ItemData, FIntPoint Index);
-
-	//UFUNCTION(BlueprintCallable, Category = "Utils")
-	//	void AddItemDirectly(FItemData ItemData, FIntPoint Index);
+		bool AddItem(FItemData ItemData, int32 Count);
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
-		void DeleteItemAtIndex(FIntPoint Index);
+		bool AddItemAsStackable(FItemData ItemData);
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
-		void MoveItem(FIntPoint OldIndex, FIntPoint NewIndex);
+		bool AddItemAsNonStackable(FItemData ItemData);
 
-	//UFUNCTION(BlueprintCallable, Category = "Utils")
-		bool AddItemAvailableSlot(FItemData* ItemData);
+
+	
+	void AddItemDirectly(FItemData ItemData, FIntPoint Index);
+
+	void DeleteItemAtIndex(FIntPoint Index);
+
+	void MoveItem(FIntPoint OldIndex, FIntPoint NewIndex);
+
+	bool AddItemToAvailableSlot(FItemData ItemData);
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
 		FIntPoint FindAvailableSlot(FItemData Item, bool& found);
@@ -84,30 +79,28 @@ public:
 	TArray<FItemData*> GetItems();
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
-		FIntPoint GetContainerSize();
+	FIntPoint GetContainerSize();
 
 	UPROPERTY(BlueprintAssignable)
-		FInventoryBasicDelegate InventoryHasChanged;
+	FInventoryBasicDelegate InventoryHasChanged;
 
 	UPROPERTY(BlueprintAssignable)
-		FItemSlotChangedDelegate OnItemDeleted;
+	FItemSlotChangedDelegate OnItemDeleted;
 
 	UPROPERTY(BlueprintAssignable)
-		FItemSlotChangedDelegate OnItemAdded;
+	FItemSlotChangedDelegate OnItemAdded;
 
 	UPROPERTY(BlueprintAssignable)
-		FItemSlotChangedDelegate OnItemCountChanged;
+	FItemSlotChangedDelegate OnItemCountChanged;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UDataTable* ItemDatabase;
+	UPROPERTY()
+	TArray<FItemData> Items;
 
-	TArray<FItemData*> Items;
-
-	FItemData GetItemDataByNameDatabase(FName Name);
-
+	UPROPERTY()
 	FIntPoint ContainerSize;
 
 	TArray<TArray<bool>> AvailableSlots;
+
 	bool AvailableSlotsIsDirty = true;
 
 };

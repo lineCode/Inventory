@@ -72,34 +72,23 @@ bool UHBItemContainerComponent::IncreaseItemCountAtSlot(FIntPoint Index, int32 C
 	return false;
 }
 
-bool UHBItemContainerComponent::AddItem(FName ItemName, int32 Count)
+bool UHBItemContainerComponent::AddItem(FItemData ItemData, int32 Count)
 {
-	FItemDataRow* ItemDataRow = ItemDatabase->FindRow<FItemDataRow>(ItemName, "");
-
-	if (!ItemDataRow)
+	if (ItemData.IsStackable())
 	{
-		return false;
-	}
-
-	FItemData* Item = new FItemData(); /// TODO ?
-	Item->Data = *ItemDataRow;
-	Item->Count = Count;
-
-	if (Item->Data.CanStackable)
-	{
-		return AddItemAsStackable(Item);
+		return AddItemAsStackable(ItemData);
 	}
 	else
 	{
-		return AddItemAsNonStackable(Item);
+		return AddItemAsNonStackable(ItemData);
 	}
 }
 
-bool UHBItemContainerComponent::AddItemAsStackable(FItemData* Item)
+bool UHBItemContainerComponent::AddItemAsStackable(FItemData ItemData)
 {
-	TArray<TTuple<FIntPoint, int32>> FreeStackableSlots = FindFreeStackableSlots(Item->GetName());
+	TArray<TTuple<FIntPoint, int32>> FreeStackableSlots = FindFreeStackableSlots(ItemData.GetName());
 
-	int32 RemainItemCount = Item->GetCount();
+	int32 RemainItemCount = ItemData.GetCount();
 
 	for (TTuple<FIntPoint, int32> SlotTuple : FreeStackableSlots)
 	{
@@ -121,38 +110,34 @@ bool UHBItemContainerComponent::AddItemAsStackable(FItemData* Item)
 
 	if (RemainItemCount>0)
 	{
-		Item->Count = RemainItemCount;
-		AddItemAsNonStackable(Item);
+		ItemData.Count = RemainItemCount;
+		AddItemAsNonStackable(ItemData);
 	}
 	return true;
 }
 
-bool UHBItemContainerComponent::AddItemAsNonStackable(FItemData* Item)
+bool UHBItemContainerComponent::AddItemAsNonStackable(FItemData ItemData)
 {
-	AddItemAvailableSlot(Item);
+	AddItemToAvailableSlot(ItemData);
 	return false;
 }
 
-void UHBItemContainerComponent::AddItemDirectly(FItemData* ItemData, FIntPoint Index)
+void UHBItemContainerComponent::AddItemDirectly(FItemData ItemData, FIntPoint Index)
 {
-	UE_LOG(LogExec, Warning, TEXT("UHBItemContainerComponent::AddItemDirectly Index %s"), *Index.ToString());
-	ItemData->SetIndex(Index);
-	UE_LOG(LogExec, Warning, TEXT("UHBItemContainerComponent::AddItemDirectly 2"));
-
+	ItemData.SetIndex(Index);
 	Items.Add(ItemData);
 	OnItemAdded.Broadcast(Index);
-	//InventoryHasChanged.Broadcast(); //call delegate container updated
 	AvailableSlotsIsDirty = true;
 }
 
 void UHBItemContainerComponent::DeleteItemAtIndex(FIntPoint Index)
 {
 	//UHBItemObject* Item = FindItemAtIndex(Index);
-	FItemData* ItemData;//TODO
-	Items.Remove(ItemData);
-	OnItemDeleted.Broadcast(Index);
-	//InventoryHasChanged.Broadcast(); //call delegate container updated
-	AvailableSlotsIsDirty = true;
+	//FItemData* ItemData;//TODO
+	//Items.Remove(ItemData);
+	//OnItemDeleted.Broadcast(Index);
+	////InventoryHasChanged.Broadcast(); //call delegate container updated
+	//AvailableSlotsIsDirty = true;
 
 }
 
@@ -169,23 +154,15 @@ void UHBItemContainerComponent::MoveItem(FIntPoint OldIndex, FIntPoint NewIndex)
 	}
 }
 
-bool UHBItemContainerComponent::AddItemAvailableSlot(FItemData* ItemData)
+bool UHBItemContainerComponent::AddItemToAvailableSlot(FItemData ItemData)
 {
 	bool bFound;
 
-	FIntPoint FoundIndex = FindAvailableSlot(*ItemData, bFound);
-	ItemData->SetIndex(FoundIndex);
-
-
-	//UHBItemObject* NewItem = NewObject<UHBItemObject>(this, UHBItemObject::StaticClass());
-	//DuplicateObject(ItemData, NewItem);
-	//NewItem->SetItemIndex(FoundIndex);
+	FIntPoint FoundIndex = FindAvailableSlot(ItemData, bFound);
 
 	if (bFound)
 	{
 		AddItemDirectly(ItemData, FoundIndex);
-		//InventoryHasChanged.Broadcast(); //call delegate container updated
-		AvailableSlotsIsDirty = true;
 	}
 	return true;
 }
@@ -237,15 +214,15 @@ TArray<TTuple<FIntPoint,int32>> UHBItemContainerComponent::FindFreeStackableSlot
 {
 	TArray<TTuple<FIntPoint, int32>> FreeSlots;
 
-	for (FItemData* Item : Items)
+	for (FItemData Item : Items)
 	{
-		if (Item->GetName() == Name)
+		if (Item.GetName() == Name)
 		{
-			int FreeStackCount = Item->GetStackSize() - Item->GetCount();
+			int FreeStackCount = Item.GetStackSize() - Item.GetCount();
 			
 			if (FreeStackCount > 0)
 			{
-				FreeSlots.Add(TTuple<FIntPoint, int32>(Item->GetIndex(),FreeStackCount));
+				FreeSlots.Add(TTuple<FIntPoint, int32>(Item.GetIndex(),FreeStackCount));
 			}
 
 		}
@@ -259,9 +236,9 @@ FItemData* UHBItemContainerComponent::FindItemAtIndex(FIntPoint Index)
 
 	for (size_t i = 0; i < Items.Num(); i++)
 	{
-		if (Items[i]->GetIndex() == Index)
+		if (Items[i].GetIndex() == Index)
 		{
-			return Items[i];
+			return &Items[i];
 		}
 	}
 	return nullptr;
@@ -311,19 +288,18 @@ TArray<TArray<bool>> UHBItemContainerComponent::GetAvailableSlots()
 
 TArray<FItemData*> UHBItemContainerComponent::GetItems()
 {
-	return Items;
+	TArray<FItemData*> ItemDataRef;
+
+	for (size_t i = 0; i < Items.Num(); i++)
+	{
+		ItemDataRef.Add(&Items[i]);
+	}
+	return ItemDataRef;
 }
 
 FIntPoint UHBItemContainerComponent::GetContainerSize()
 {
 	return ContainerSize;
-}
-
-FItemData UHBItemContainerComponent::GetItemDataByNameDatabase(FName Name)
-{
-	UE_LOG(LogExec, Warning, TEXT(" UHBItemContainerComponent::GetItemDataByNameDatabase"));
-	FItemData EquipmentItemData;
-	return EquipmentItemData;
 }
 
 

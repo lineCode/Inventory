@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Data/HBItemData.h"
 #include "InventoryCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -78,9 +79,9 @@ public:
 	void InitInventory();
 
 	UFUNCTION(BlueprintCallable)
-	void PickUpItem(FName Name, int32 Count);
+	void PickUpItem(FItemData ItemData, int32 Count);
 
-	TArray<class UHBItemObject*> AddedItems;
+	//TArray<class UHBItemObject*> AddedItems;
 
 public:
 	/** Returns CameraBoom subobject **/

@@ -2,16 +2,6 @@
 
 #include "Data/HBItemData.h"
 
-FItemDataRow::FItemDataRow()
-{
-	this->Name = "None";
-}
-
-FItemDataRow::FItemDataRow(FName Name, int32 Amount)
-{
-	this->Name = Name;
-}
-
 void FItemData::SetIndex(FIntPoint NewIndex)
 {
 	Index = NewIndex;
@@ -27,8 +17,8 @@ TArray<FIntPoint> FItemData::GetItemCoordinates()
 	UE_LOG(LogTemp, Warning, TEXT("GetItemCoordinates()"));
 	TArray<FIntPoint> Coordinates;
 
-	int X = Data.Size.X;
-	int Y = Data.Size.Y;
+	int X = Data->Size.X;
+	int Y = Data->Size.Y;
 
 	for (size_t x = 0; x < X; x++)
 	{
@@ -46,8 +36,8 @@ TArray<FIntPoint> FItemData::GetItemCoordinatesForIndex(FIntPoint NewIndex)
 {
 	TArray<FIntPoint> Coordinates;
 
-	int X = Data.Size.X;
-	int Y = Data.Size.Y;
+	int X = Data->Size.X;
+	int Y = Data->Size.Y;
 
 	for (size_t x = 0; x < X; x++)
 	{
@@ -61,17 +51,17 @@ TArray<FIntPoint> FItemData::GetItemCoordinatesForIndex(FIntPoint NewIndex)
 
 FIntPoint FItemData::GetSize()
 {
-	return Data.Size;
+	return Data->Size;
 }
 
 UTexture2D* FItemData::GetIcon()
 {
-	return Data.Icon;
+	return Data->Icon;
 }
 
 FName FItemData::GetName()
 {
-	return Data.Name;
+	return Data->Name;
 }
 
 int32 FItemData::GetCount()
@@ -86,10 +76,10 @@ void FItemData::SetCount(int32 NewCount)
 
 int32 FItemData::GetStackSize()
 {
-	return Data.StackSize;
+	return Data->StackSize;
 }
 
 TEnumAsByte<EItemType::Type> FItemData::GetItemType()
 {
-	return Data.ItemType;
+	return Data->ItemType;
 }
