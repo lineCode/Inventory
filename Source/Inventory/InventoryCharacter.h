@@ -23,6 +23,9 @@ class AInventoryCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Inventory, meta = (AllowPrivateAccess = "true"))
 	class UHBItemContainerComponent* Inventory;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Inventory, meta = (AllowPrivateAccess = "true"))
+	class UHBItemContainerComponent* Inventory2;
+
 public:
 	AInventoryCharacter();
 
@@ -40,6 +43,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TSubclassOf<class UHBItemContainerWidget> InventoryWidgetClass;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//	TSubclassOf<class UUserWidget> MainWidgetClass;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//	UUserWidget* MainWidget;
 protected:
 
 	/** Resets HMD orientation in VR. */

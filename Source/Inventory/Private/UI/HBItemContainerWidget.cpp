@@ -8,6 +8,7 @@
 #include "Component/HBItemContainerComponent.h"
 #include "UI/HBItemSlotWidget.h"
 #include "Blueprint/WidgetTree.h"
+#include "Components/CanvasPanelSlot.h"
 #include "Data/HBItemData.h"
 
 UHBItemContainerWidget::UHBItemContainerWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -62,6 +63,18 @@ void UHBItemContainerWidget::InitContainer(UHBItemContainerComponent* _ItemConta
 		}
 		ItemSlots.Add(SlotContainersRow);
 	}
+
+	UCanvasPanelSlot* SlotGridSlot = Cast<UCanvasPanelSlot>(SlotGrid->Slot);
+
+	if (SlotGridSlot)
+	{
+		FVector2D Size;
+		Size.X = 64 * ItemContainerComponent->GetContainerSize().Y;
+		Size.Y = 64 * ItemContainerComponent->GetContainerSize().X;
+		SlotGridSlot->SetSize(Size);
+	}
+
+
 }
 
 void UHBItemContainerWidget::RefreshContainerWidget()

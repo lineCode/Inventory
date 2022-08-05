@@ -46,6 +46,8 @@ AInventoryCharacter::AInventoryCharacter()
 	// Create a ItemContainerComponent
 	Inventory = CreateDefaultSubobject<UHBItemContainerComponent>(TEXT("ItemContainerComponent"));
 
+	Inventory2 = CreateDefaultSubobject<UHBItemContainerComponent>(TEXT("ItemContainerComponent2"));
+
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
@@ -58,6 +60,7 @@ AInventoryCharacter::AInventoryCharacter()
 void AInventoryCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	//MainWidget = CreateWidget<UUserWidget>(Cast<APlayerController>(GetController()), MainWidgetClass);
 
 	InitInventory();
 }
@@ -95,14 +98,29 @@ void AInventoryCharacter::InitInventory()
 {
 	if (Inventory)
 	{
+		//MainWidget->GetChildren();
+
 		Inventory->SetContainerSize(FIntPoint(10, 5));
 		UHBItemContainerWidget* InventoryWidget = CreateWidget<UHBItemContainerWidget>(Cast<APlayerController>(GetController()), InventoryWidgetClass);
 		InventoryWidget->AddToViewport();
 		InventoryWidget->InitContainer(Inventory);
+		InventoryWidget->SetPositionInViewport(FVector2D(0, 30));
 
 		Inventory->OnItemAdded.AddDynamic(InventoryWidget, &UHBItemContainerWidget::OnItemAdded);
 		Inventory->OnItemDeleted.AddDynamic(InventoryWidget, &UHBItemContainerWidget::OnItemDeleted);
 		Inventory->OnItemCountChanged.AddDynamic(InventoryWidget, &UHBItemContainerWidget::OnCountChanged);
+
+
+
+		Inventory2->SetContainerSize(FIntPoint(5, 5));
+		UHBItemContainerWidget* InventoryWidget2 = CreateWidget<UHBItemContainerWidget>(Cast<APlayerController>(GetController()), InventoryWidgetClass);
+		InventoryWidget2->AddToViewport();
+		InventoryWidget2->InitContainer(Inventory2);
+		InventoryWidget2->SetPositionInViewport(FVector2D(500, 30));
+
+		Inventory2->OnItemAdded.AddDynamic(InventoryWidget2, &UHBItemContainerWidget::OnItemAdded);
+		Inventory2->OnItemDeleted.AddDynamic(InventoryWidget2, &UHBItemContainerWidget::OnItemDeleted);
+		Inventory2->OnItemCountChanged.AddDynamic(InventoryWidget2, &UHBItemContainerWidget::OnCountChanged);
 
 		//FInputModeGameAndUI Mode;
 		//Mode.SetLockMouseToViewport(true);
