@@ -35,10 +35,10 @@ public:
 	class UBoxComponent* PickupCollider;
 
 	UPROPERTY(EditAnywhere)
-	FItemData CurrentItemData;
+	FItemData mItemData;
 
 	UFUNCTION()
-	void InitPickupItemActor(FItemData ItemData);
+	void InitPickupItemActor(FItemData InItemData);
 
 
 };

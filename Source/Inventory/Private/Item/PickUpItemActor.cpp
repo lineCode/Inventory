@@ -44,13 +44,13 @@ void APickUpItemActor::Tick(float DeltaTime)
 
 }
 
-void APickUpItemActor::InitPickupItemActor(FItemData ItemData)
+void APickUpItemActor::InitPickupItemActor(FItemData InItemData)
 {
-	if (ItemData.Data)
+	if (InItemData.Data)
 	{
-		if (ItemData.Data->Mesh)
+		if (InItemData.Data->Mesh)
 		{
-			ItemMesh->SetStaticMesh(ItemData.Data->Mesh);
+			ItemMesh->SetStaticMesh(InItemData.Data->Mesh);
 			ItemMesh->SetWorldScale3D(FVector(0.5));
 		}
 	}
@@ -60,14 +60,17 @@ void APickUpItemActor::InitPickupItemActor(FItemData ItemData)
 
 void APickUpItemActor::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 {
+	Super::PostEditChangeProperty(e);
+
+
 	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(APickUpItemActor, CurrentItemData))
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(APickUpItemActor, mItemData))
 	{
 		//various uproperty tricks, see link
 		
 	}
 
-	//InitPickupItemActor(CurrentItemData);
+	InitPickupItemActor(mItemData);
 
 	Super::PostEditChangeProperty(e);
 }
