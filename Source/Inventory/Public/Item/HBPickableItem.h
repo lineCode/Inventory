@@ -7,6 +7,8 @@
 #include "Data/HBItemData.h"
 #include "HBPickableItem.generated.h"
 
+
+
 UCLASS()
 class INVENTORY_API AHBPickableItem : public AActor
 {
@@ -38,6 +40,6 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	UPROPERTY(EditAnywhere)
-	FItemData ItemData;
+	FPickableItemData ItemData;
 
 };

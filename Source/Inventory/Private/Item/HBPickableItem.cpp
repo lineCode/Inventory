@@ -46,7 +46,7 @@ void AHBPickableItem::OnOverlapped(AActor* OverlappedActor, AActor* OtherActor)
 		{
 			if (ItemData.Data->Mesh)
 			{
-				Cast<AInventoryCharacter>(OtherActor)->PickUpItem(ItemData,1);
+				Cast<AInventoryCharacter>(OtherActor)->PickUpItem(ItemData);
 			}
 		}
 		

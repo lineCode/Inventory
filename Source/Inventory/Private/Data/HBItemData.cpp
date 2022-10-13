@@ -83,3 +83,14 @@ TEnumAsByte<EItemType::Type> FItemData::GetItemType()
 {
 	return Data->ItemType;
 }
+
+
+/////INVENTORY ENTITY
+
+
+
+FString FInventoryEntity::GetDebugString() const
+{
+	unimplemented();
+	return FString();
+}

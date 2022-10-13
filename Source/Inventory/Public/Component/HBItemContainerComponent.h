@@ -10,7 +10,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInventoryBasicDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemSlotChangedDelegate, FIntPoint, Index);
 
-
+class UHBInventoryItemDefinition;
+class UHBInventoryItemInstance;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class UHBItemContainerComponent : public UActorComponent
@@ -96,6 +97,8 @@ public:
 	UPROPERTY()
 	TArray<FItemData> Items;
 
+
+
 	UPROPERTY()
 	FIntPoint ContainerSize;
 
@@ -103,4 +106,14 @@ public:
 
 	bool AvailableSlotsIsDirty = true;
 
+	// Lyra
+
+	UPROPERTY()
+	TArray<FInventoryEntity> Entries;
+
+	UHBInventoryItemInstance* AddEntiry(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition,int32 StackCount);
+
+
+	UFUNCTION(BlueprintCallable)
+	USoundWave* GetEntrySound(int32 Index);
 };

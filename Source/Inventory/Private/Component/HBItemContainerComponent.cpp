@@ -1,4 +1,7 @@
 #include "Component/HBItemContainerComponent.h"
+#include "Item/HBInventoryItemInstance.h"
+#include "Item/HBInventoryItemDefinition.h"
+#include "Item/Fragments/HBItemVisualFragment.h"
 
 // Sets default values for this component's properties
 UHBItemContainerComponent::UHBItemContainerComponent()
@@ -302,6 +305,45 @@ FIntPoint UHBItemContainerComponent::GetContainerSize()
 	return ContainerSize;
 }
 
+UHBInventoryItemInstance* UHBItemContainerComponent::AddEntiry(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition, int32 StackCount)
+{
+	UHBInventoryItemInstance* Result = nullptr;
+
+	FInventoryEntity& NewEntry = Entries.AddDefaulted_GetRef();
+	NewEntry.Instance = NewObject<UHBInventoryItemInstance>(this);
+	NewEntry.Instance->SetItemDef(ItemDefinition);
+
+	for (UHBInventoryItemFragment* Fragment : GetDefault<UHBInventoryItemDefinition>(ItemDefinition)->Fragments)
+	{
+		if (Fragment != nullptr)
+		{
+			Fragment->OnInstanceCreated(NewEntry.Instance);
+		}
+	}
+
+	NewEntry.StackCount = StackCount;
+
+	Result = NewEntry.Instance;
+
+	return Result;
+}
+
+USoundWave* UHBItemContainerComponent::GetEntrySound(int32 Index)
+{
+	if (Entries.IsValidIndex(Index))
+	{
+		if (Entries[Index].Instance)
+		{
+			const UHBItemVisualFragment* ItemVisualFragment = Cast<UHBItemVisualFragment>(Entries[Index].Instance->FindFragmentByClass(UHBItemVisualFragment::StaticClass()));
+			if (ItemVisualFragment)
+			{
+				return ItemVisualFragment->ItemInventorySound;
+			}
+		}
+		
+	}
+	return nullptr;
+}
 
 
 //bool UHBItemContainerComponent::IsSlotEmpty(int32 index)

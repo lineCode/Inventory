@@ -131,7 +131,7 @@ void AInventoryCharacter::InitInventory()
 	
 }
 
-void AInventoryCharacter::PickUpItem(FItemData ItemData, int32 Count)
+void AInventoryCharacter::PickUpItem(FPickableItemData PickableItemData)
 {
 	//UHBItemObject* NewItemObject = NewObject<UHBItemObject>(Inventory, UHBItemObject::StaticClass());
 	//
@@ -141,12 +141,18 @@ void AInventoryCharacter::PickUpItem(FItemData ItemData, int32 Count)
 
 	//UE_LOG(LogTemp, Warning, TEXT("PickUpItem %s"), *Name.ToString());
 
-	if (ItemData.Data)
+	if (PickableItemData.Data)
 	{
-		Inventory->AddItem(ItemData, Count);
+		//Inventory->AddItem(PickableItemData);
 	}
 
 	
+}
+
+void AInventoryCharacter::PickUpItemWithDef(TSubclassOf<UHBInventoryItemDefinition> ItemDefination)
+{
+	Inventory->AddEntiry(ItemDefination, 1);
+
 }
 
 

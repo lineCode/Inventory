@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Item/HBInventoryItemDefinition.h"
 #include "Data/HBItemData.h"
 #include "InventoryCharacter.generated.h"
+
 
 UCLASS(config=Game)
 class AInventoryCharacter : public ACharacter
@@ -86,7 +88,10 @@ public:
 	void InitInventory();
 
 	UFUNCTION(BlueprintCallable)
-	void PickUpItem(FItemData ItemData, int32 Count);
+	void PickUpItem(FPickableItemData PickableItemData);
+
+	UFUNCTION(BlueprintCallable)
+	void PickUpItemWithDef(TSubclassOf<UHBInventoryItemDefinition> ItemDefination);
 
 	//TArray<class UHBItemObject*> AddedItems;
 
