@@ -91,7 +91,7 @@ public:
 	void PickUpItem(FPickableItemData PickableItemData);
 
 	UFUNCTION(BlueprintCallable)
-	void PickUpItemWithDef(TSubclassOf<UHBInventoryItemDefinition> ItemDefination);
+	void PickUpItemWithDef(TSubclassOf<UHBInventoryItemDefinition> ItemDefination, int32 Count);
 
 	//TArray<class UHBItemObject*> AddedItems;
 

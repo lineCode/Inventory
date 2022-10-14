@@ -149,9 +149,9 @@ void AInventoryCharacter::PickUpItem(FPickableItemData PickableItemData)
 	
 }
 
-void AInventoryCharacter::PickUpItemWithDef(TSubclassOf<UHBInventoryItemDefinition> ItemDefination)
+void AInventoryCharacter::PickUpItemWithDef(TSubclassOf<UHBInventoryItemDefinition> ItemDefination, int32 Count)
 {
-	Inventory->AddEntiry(ItemDefination, 1);
+	Inventory->AddItemDef(ItemDefination, Count);
 
 }
 

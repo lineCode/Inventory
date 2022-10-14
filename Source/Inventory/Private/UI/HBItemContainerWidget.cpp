@@ -9,6 +9,7 @@
 #include "UI/HBItemSlotWidget.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Item/Fragments/HBItemVisualFragment.h"
 #include "Data/HBItemData.h"
 
 UHBItemContainerWidget::UHBItemContainerWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -100,23 +101,24 @@ void UHBItemContainerWidget::OnItemDeleted(FIntPoint Index)
 	{
 		FItemData ItemData;
 		ItemData.Count = 0;
-		ItemSlots[Index.X][Index.Y]->SetItemData(ItemData);
+		//ItemSlots[Index.X][Index.Y]->SetItemData(ItemData);
 	}
 }
 
 
 void UHBItemContainerWidget::OnItemAdded(FIntPoint Index)
 {
-	FItemData* Item = ItemContainerComponent->FindItemAtIndex(Index);
+	FInventoryEntity InventortyEntry = ItemContainerComponent->FindItemEntryAtIndex(Index);
+	
 
-	ItemSlots[Index.X][Index.Y]->SetItemData(*Item);
+	ItemSlots[Index.X][Index.Y]->SetItemData(InventortyEntry);
 }
 
-void UHBItemContainerWidget::OnCountChanged(FIntPoint Index)
+void UHBItemContainerWidget::OnCountChanged(FIntPoint Index, int32 StackCount)
 {
-	FItemData* Item = ItemContainerComponent->FindItemAtIndex(Index);
+	//FItemData* Item = ItemContainerComponent->FindItemAtIndex(Index);
 
-	ItemSlots[Index.X][Index.Y]->RefreshItemCountText();
+	ItemSlots[Index.X][Index.Y]->RefreshItemCountText(StackCount);
 }
 
 

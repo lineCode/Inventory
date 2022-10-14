@@ -42,3 +42,14 @@ public:
 
 	
 };
+
+
+//@TODO: Make into a subsystem instead?
+UCLASS()
+class UHBInventoryFunctionLibrary : public UBlueprintFunctionLibrary
+{
+	GENERATED_BODY()
+public:
+		UFUNCTION(BlueprintCallable, meta = (DeterminesOutputType = FragmentClass))
+		static const UHBInventoryItemFragment* FindItemDefinitionFragment(TSubclassOf<UHBInventoryItemDefinition> ItemDef, TSubclassOf<UHBInventoryItemFragment> FragmentClass);
+};

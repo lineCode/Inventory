@@ -77,5 +77,6 @@ public:
 	UPROPERTY()
 	int32 StackCount = 0;
 
-
+	UPROPERTY()
+	FIntPoint Coordinates;
 };

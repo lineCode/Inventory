@@ -22,3 +22,17 @@ const UHBInventoryItemFragment* UHBInventoryItemDefinition::FindFragmentByClass(
 
 	return nullptr;
 }
+
+
+
+//////////////////////////////////////////////////////////////////////
+// ULyraInventoryItemDefinition
+
+const UHBInventoryItemFragment* UHBInventoryFunctionLibrary::FindItemDefinitionFragment(TSubclassOf<UHBInventoryItemDefinition> ItemDef, TSubclassOf<UHBInventoryItemFragment> FragmentClass)
+{
+	if ((ItemDef != nullptr) && (FragmentClass != nullptr))
+	{
+		return GetDefault<UHBInventoryItemDefinition>(ItemDef)->FindFragmentByClass(FragmentClass);
+	}
+	return nullptr;
+}

@@ -15,6 +15,8 @@
 #include "Component/HBItemContainerComponent.h"
 #include "Manager/HBSoundManager.h"
 #include "Main/HBGameInstance.h"
+#include "Item/HBInventoryItemInstance.h"
+#include "Item/Fragments/HBItemVisualFragment.h"
 #include "Kismet/GameplayStatics.h"
 
 UHBItemSlotWidget::UHBItemSlotWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -104,13 +106,10 @@ void UHBItemSlotWidget::SetToDefaultState()
 	BackgroundImage->SetBrushFromTexture(DefaultBG);
 }
 
-void UHBItemSlotWidget::RefreshItemCountText()
+void UHBItemSlotWidget::RefreshItemCountText(int32 StackCount)
 {
 	UE_LOG(LogTemp, Warning, TEXT("UHBItemSlotContainerWidget::SetItemAmountText"));
-	FItemData* Item = ParentContainer->ItemContainerComponent->FindItemAtIndex(Index);
-
-	int32 Count__ = Item->GetCount();//ItemData.Count;
-	SetItemCountText(Count__);
+	SetItemCountText(StackCount);
 }
 
 void UHBItemSlotWidget::SetItemCountText(int32 Count)
@@ -152,11 +151,11 @@ void UHBItemSlotWidget::SetSlotEmpty(bool empty)
 	}
 }
 
-void UHBItemSlotWidget::SetItemData(FItemData NewItemData)
+void UHBItemSlotWidget::SetItemData(FInventoryEntity NewItemData)
 {
-	ItemData = NewItemData;
+	InventoryEntity = NewItemData;
 
-	if (NewItemData.Count <=0 )
+	if (InventoryEntity.StackCount <=0 )
 	{
 		if (ChildItemVisual)
 		{
@@ -167,15 +166,18 @@ void UHBItemSlotWidget::SetItemData(FItemData NewItemData)
 		return;
 	}
 
+	const UHBItemVisualFragment* ItemVisualFragment = Cast<UHBItemVisualFragment>(UHBInventoryFunctionLibrary::FindItemDefinitionFragment(InventoryEntity.Instance->GetItemDef(), UHBItemVisualFragment::StaticClass()));
+
+
 	UHBItemVisualWidget* ItemVisual = WidgetTree->ConstructWidget<UHBItemVisualWidget>(ItemVisualSubclass, TEXT("TEST123"));
 	ItemVisual->SetParentSlot(this);
 	MainCanvas->AddChild(ItemVisual);
 
-	FIntPoint ItemSize = ItemData.GetSize();
+	FIntPoint ItemSize = ItemVisualFragment->SlotSize;
 	Cast<UCanvasPanelSlot>(ItemVisual->Slot)->SetSize(FVector2D(64 * ItemSize.Y, 64 * ItemSize.X));
-	ItemVisual->SetItemIconBrush(ItemData.GetIcon());
+	ItemVisual->SetItemIconBrush(ItemVisualFragment->ItemInventoryImage);
 	ChildItemVisual = ItemVisual;
-	SetItemCountText(ItemData.GetCount());
+	SetItemCountText(InventoryEntity.StackCount);
 }
 
 //UHBItemData* UHBItemSlotContainerWidget::GetItemData()

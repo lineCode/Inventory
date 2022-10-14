@@ -9,6 +9,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInventoryBasicDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemSlotChangedDelegate, FIntPoint, Index);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FItemSlotCountChangedDelegate, FIntPoint, Index,int32, StackCount);
 
 class UHBInventoryItemDefinition;
 class UHBInventoryItemInstance;
@@ -39,7 +40,10 @@ public:
 	//HELPER FUNCTIONS
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
-		bool IncreaseItemCountAtSlot(FIntPoint Index, int32 CountToAdd);
+	bool IncreaseItemCountAtSlot(FIntPoint Index, int32 CountToAdd);
+
+	//UFUNCTION(BlueprintCallable, Category = "Utils")
+	bool IncreaseEntryStackCount(FInventoryEntity* Entry, int32 CountToAdd);
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
 		bool AddItem(FItemData ItemData, int32 Count);
@@ -60,19 +64,26 @@ public:
 
 	bool AddItemToAvailableSlot(FItemData ItemData);
 
-	UFUNCTION(BlueprintCallable, Category = "Utils")
-		FIntPoint FindAvailableSlot(FItemData Item, bool& found);
+
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
-		bool IsItemSuitableForNewIndex(FItemData Item, FIntPoint NewCoordinates);
+	FIntPoint GetAvailableSlot(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition, bool& found);
+
+	TArray<FIntPoint> GetItemCoordinatesForIndex(FIntPoint NewIndex, FIntPoint Size);
+
+	UFUNCTION(BlueprintCallable, Category = "Utils")
+	bool IsCoordinatesAvailable(TArray<FIntPoint> ItemCoordinates);
+
+	UFUNCTION(BlueprintCallable, Category = "Utils")
+	bool IsItemSuitableForNewIndex(FItemData Item, FIntPoint NewCoordinates);
 
 	TArray<TTuple<FIntPoint, int32>> FindFreeStackableSlots(FName Name);
 
 	//UFUNCTION(BlueprintCallable, Category = "Utils")
 	FItemData* FindItemAtIndex(FIntPoint Index);
 
-	//UFUNCTION()
-	TArray<TArray<bool>> GetAvailableSlots();
+	FInventoryEntity FindItemEntryAtIndex(FIntPoint Index);
+	int FindEntryIndexAtCoordinates(FIntPoint Coordinate);
 
 	//UFUNCTION(BlueprintCallable, Category = "Utils")
 	//	bool IsSlotEmptyAtIndex(int x, int y);
@@ -92,7 +103,7 @@ public:
 	FItemSlotChangedDelegate OnItemAdded;
 
 	UPROPERTY(BlueprintAssignable)
-	FItemSlotChangedDelegate OnItemCountChanged;
+	FItemSlotCountChangedDelegate OnItemCountChanged;
 
 	UPROPERTY()
 	TArray<FItemData> Items;
@@ -111,7 +122,23 @@ public:
 	UPROPERTY()
 	TArray<FInventoryEntity> Entries;
 
-	UHBInventoryItemInstance* AddEntiry(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition,int32 StackCount);
+	UHBInventoryItemInstance* AddEntiry(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition,int32 StackCount, FIntPoint Coordinates);
+	
+	void AddItemDef(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition, int32 StackCount);
+
+	//UHBInventoryItemInstance* AddEntiryAsStackable(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition, int32 StackCount);
+	
+	void AddItemDefAsNonStackable(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition, int32 StackCount);
+
+	
+
+	TArray<TTuple<FIntPoint, int32>> GetUnfilledStackableSlots(TSubclassOf<UHBInventoryItemDefinition> ItemDef);
+	
+	//UFUNCTION(BlueprintCallable, Category = "Utils")
+	TTuple<FIntPoint, int32> GetAvailableSlotCoordinate(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition, bool& bFound, bool& bIsStack);
+
+	void MarkSlotsAvilable(TArray<FIntPoint> SlotCoordinates);
+	void MarkSlotsNonAvilable(TArray<FIntPoint> SlotCoordinates);
 
 
 	UFUNCTION(BlueprintCallable)

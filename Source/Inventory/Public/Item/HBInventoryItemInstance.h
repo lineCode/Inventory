@@ -15,6 +15,11 @@ class INVENTORY_API UHBInventoryItemInstance : public UObject
 {
 	GENERATED_BODY()
 	
+public:
+	TSubclassOf<UHBInventoryItemDefinition> GetItemDef() const
+	{
+		return ItemDef;
+	}
 
 private:
 	void SetItemDef(TSubclassOf<UHBInventoryItemDefinition> InDef);

@@ -42,7 +42,7 @@ public:
 		void OnItemAdded(FIntPoint Index);
 
 	UFUNCTION(BlueprintCallable)
-		void OnCountChanged(FIntPoint Index);
+		void OnCountChanged(FIntPoint Index, int32 StackCount);
 
 	UFUNCTION(BlueprintCallable)
 		void OnSlotClicked(FIntPoint Index);

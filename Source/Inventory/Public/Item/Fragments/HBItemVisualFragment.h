@@ -9,6 +9,9 @@
 /**
  * 
  */
+
+//UHBItemVisualFragment REname as UHBInventorySlotFragment
+
 UCLASS()
 class INVENTORY_API UHBItemVisualFragment : public UHBInventoryItemFragment
 {
@@ -23,4 +26,10 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	FIntPoint SlotSize;
+
+	UPROPERTY(EditAnywhere)
+	int32 MaxStack = 1;
+
+	UPROPERTY(EditAnywhere)
+	bool Stackable;
 };

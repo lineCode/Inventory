@@ -55,7 +55,7 @@ public:
 	void SetToDefaultState();
 
 	UFUNCTION(BlueprintCallable)
-		void RefreshItemCountText(); // Change as refreshh
+		void RefreshItemCountText(int32 StackCount); // Change as refreshh
 	
 	UFUNCTION(BlueprintCallable)
 		void SetItemCountText(int32 Count);
@@ -67,7 +67,7 @@ public:
 		void SetSlotEmpty(bool empty);
 
 	UFUNCTION(BlueprintCallable)
-		void SetItemData(FItemData NewItemObject);
+		void SetItemData(FInventoryEntity NewItemObject);
 
 	////UFUNCTION(BlueprintCallable)
 	////	UHBItemData* GetItemData();
@@ -89,6 +89,8 @@ public:
 
 	FIntPoint Index;
 	FItemData ItemData;
+	FInventoryEntity InventoryEntity;
+
 	class UHBItemVisualWidget* ChildItemVisual;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
