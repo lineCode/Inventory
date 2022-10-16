@@ -70,7 +70,7 @@ void UHBItemContainerComponent::MoveItem(FIntPoint OldIndex, FIntPoint NewIndex)
 		MarkSlotsAvilable(OldItemItemCoordinate);
 		MarkSlotsNonAvilable(NewItemItemCoordinate);
 
-		OnItemAdded.Broadcast(NewIndex);
+		OnItemAdded.Broadcast(NewIndex,*Item);
 	}
 
 }
@@ -172,7 +172,7 @@ UHBInventoryItemInstance* UHBItemContainerComponent::AddEntiry(TSubclassOf<UHBIn
 
 	MarkSlotsNonAvilable(ItemCoordinate);
 
-	OnItemAdded.Broadcast(Coordinates);
+	OnItemAdded.Broadcast(Coordinates, NewEntry);
 
 	return Result;
 }

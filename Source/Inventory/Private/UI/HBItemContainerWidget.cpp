@@ -3,15 +3,12 @@
 
 #include "UI/HBItemContainerWidget.h"
 #include "Components/UniformGridPanel.h"
+#include "Components/CanvasPanelSlot.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
+#include "Blueprint/WidgetTree.h"
 #include "Component/HBItemContainerComponent.h"
 #include "UI/HBItemSlotWidget.h"
-#include "Blueprint/WidgetTree.h"
-#include "Components/CanvasPanelSlot.h"
-#include "Item/Fragments/HBItemVisualFragment.h"
-#include "Data/HBItemData.h"
-
 UHBItemContainerWidget::UHBItemContainerWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 
@@ -22,46 +19,33 @@ void UHBItemContainerWidget::NativeConstruct()
 	// Call the Blueprint "Event Construct" node
 	Super::NativeConstruct();
 	UE_LOG(LogTemp, Warning, TEXT("UHBItemContainerWidget::NativeConstruct()"));
-
-
-
 }
 
 void UHBItemContainerWidget::InitContainer(UHBItemContainerComponent* InItemContainerComponent)
 {
 	ItemContainerComponent = InItemContainerComponent;
-
-
-
-	//UHBItemSlotWidget* HBItemSlotWidget = CreateWidget<UHBItemSlotWidget>(this, UHBItemSlotWidget::StaticClass());
-	//UButton* HBItemSlotWidget = CreateWidget<UButton>(this, UButton::StaticClass());
-
-	UPanelWidget* RootWidget = Cast<UPanelWidget>(GetRootWidget());
-
-
+	SlotGrid->ClearChildren();
 
 	for (size_t i = 0; i < ItemContainerComponent->GetContainerSize().X; i++)
 	{
 		TArray<class UHBItemSlotWidget*>SlotContainersRow;
 		for (size_t j = 0; j < ItemContainerComponent->GetContainerSize().Y; j++)
 		{
-			FString Base = "DragabbleItemSlot";
+			FString Base = "ItemSlot";
 			Base.Append(FString::FromInt(i)).AppendChar(',').Append(FString::FromInt(j));
-			UHBItemSlotWidget* SlotContainer = WidgetTree->ConstructWidget<UHBItemSlotWidget>(ItemSlotBGSubclass, FName(*Base)/*TEXT("Image")*/); // The second parameter is the name and is optional.
+			UHBItemSlotWidget* SlotContainer = WidgetTree->ConstructWidget<UHBItemSlotWidget>(ItemSlotBGSubclass, FName(*Base)/*TEXT("Image")*/);
 			SlotContainer->OnSlotClicked.AddDynamic(this, &UHBItemContainerWidget::OnSlotClicked);
-			SlotContainer->ParentContainer = this;
+			SlotContainer->OnSlotDragEnter.AddDynamic(this, &UHBItemContainerWidget::OnSlotDragEnter);
+			SlotContainer->OnSlotDragLeave.AddDynamic(this, &UHBItemContainerWidget::OnSlotDragLeave);
+			SlotContainer->OnSlotDragOnDrop.AddDynamic(this, &UHBItemContainerWidget::OnSlotDragOnDrop);
 			SlotGrid->AddChildToUniformGrid(SlotContainer, i, j);
-			SlotContainer->SetIndex(i, j);
-
+			SlotContainer->SetCoordinate(FIntPoint(i, j));
 			SlotContainersRow.Add(SlotContainer);
-			//SlotGrid->AddChildToUniformGrid(HBItemSlotWidget, i, j);
-
 		}
-		ItemSlots.Add(SlotContainersRow);
 	}
 
+	///SET ContainerSize//
 	UCanvasPanelSlot* SlotGridSlot = Cast<UCanvasPanelSlot>(SlotGrid->Slot);
-
 	if (SlotGridSlot)
 	{
 		FVector2D Size;
@@ -69,79 +53,76 @@ void UHBItemContainerWidget::InitContainer(UHBItemContainerComponent* InItemCont
 		Size.Y = 64 * ItemContainerComponent->GetContainerSize().X;
 		SlotGridSlot->SetSize(Size);
 	}
-
+	///////////////
 
 }
 
 void UHBItemContainerWidget::RefreshContainerWidget()
 {
-	//int sizeX = ItemContainerComponent->GetContainerSize().X;
-	//int sizeY = ItemContainerComponent->GetContainerSize().Y;
-
-
-	//TArray<FItemData*> Items = ItemContainerComponent->GetItems();
-
-	//for (size_t i = 0; i < Items.Num(); i++)
-	//{
-	//	FIntPoint Index = Items[i]->GetIndex();
-	//	//SlotContainers[Index.X][Index.Y]->SetItemData(Items[i]->GetData());
-	//}
-
+	unimplemented();
 }
 
-void UHBItemContainerWidget::OnItemDeleted(FIntPoint Index)
+void UHBItemContainerWidget::OnItemDeleted(FIntPoint Coordinate)
 {
-	FIntPoint Test = Index;
-	if (ItemSlots[Index.X][Index.Y])
+	if (GetItemSlotAtCoordinate(Coordinate))
 	{
-		FInventoryEntity InventortyEntry;
-		InventortyEntry.StackCount = 0;
-		ItemSlots[Index.X][Index.Y]->SetItemData(InventortyEntry);
+		GetItemSlotAtCoordinate(Coordinate)->SetSlotEmpty();
 	}
 }
 
-
-void UHBItemContainerWidget::OnItemAdded(FIntPoint Index)
+void UHBItemContainerWidget::OnItemAdded(FIntPoint Coordinate, FInventoryEntity InventortyEntry)
 {
-	FInventoryEntity InventortyEntry = ItemContainerComponent->FindItemEntryAtIndex(Index);
-	
-
-	ItemSlots[Index.X][Index.Y]->SetItemData(InventortyEntry);
+	if (GetItemSlotAtCoordinate(Coordinate))
+	{
+		GetItemSlotAtCoordinate(Coordinate)->SetItemData(InventortyEntry);
+	}
 }
 
-void UHBItemContainerWidget::OnCountChanged(FIntPoint Index, int32 StackCount)
+void UHBItemContainerWidget::OnCountChanged(FIntPoint Coordinate, int32 StackCount)
 {
 	//FItemData* Item = ItemContainerComponent->FindItemAtIndex(Index);
 
-	ItemSlots[Index.X][Index.Y]->RefreshItemCountText(StackCount);
+	if (GetItemSlotAtCoordinate(Coordinate))
+	{
+		GetItemSlotAtCoordinate(Coordinate)->SetItemCountText(StackCount);
+	}
 }
-
-
-
 
 void UHBItemContainerWidget::OnSlotClicked(FIntPoint Index)
 {
-	//ItemContainerComponent->DeleteItemAtIndex(Index);
+	//unimplemented();
+}
 
-	//UHBItemObject* Item = ItemContainerComponent->FindItemAtIndex(Index);
-	//if (Item)
-	//{
-	//	Item->DeleteItemAtIndex(Index);
-	//}
+void UHBItemContainerWidget::OnSlotDragEnter(FIntPoint Index, FIntPoint Size)
+{
+	MarkSlots(Index, Size);
+}
+
+; void UHBItemContainerWidget::OnSlotDragLeave(FIntPoint Index, FIntPoint Size)
+{
+	ClearMarkedSlots();
+}
+
+void UHBItemContainerWidget::OnSlotDragOnDrop(FIntPoint OldCoordinate, FIntPoint NewCoordinate)
+{
+	if (ItemContainerComponent)
+	{
+		ItemContainerComponent->MoveItem(OldCoordinate, NewCoordinate);
+	}
+
+	ClearMarkedSlots();
 }
 
 UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinate(FIntPoint Coordinate)
 {
-	if (!ItemSlots.IsValidIndex(Coordinate.X))
+	FIntPoint Size = ItemContainerComponent->GetContainerSize();
+	UWidget* Widget = SlotGrid->GetChildAt(Size.Y * Coordinate.X + Coordinate.Y);
+	if (Widget)
 	{
-		return nullptr;
-	}
-	if (!ItemSlots[Coordinate.X].IsValidIndex(Coordinate.Y))
-	{
-		return nullptr;
+		return Cast<UHBItemSlotWidget>(Widget);
 	}
 
-	return ItemSlots[Coordinate.X][Coordinate.Y];
+	return nullptr;
 }
 
 UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateOffset(FIntPoint Coordinate, FIntPoint Offset)
@@ -150,47 +131,20 @@ UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateOffset(FIntPoi
 	return GetItemSlotAtCoordinate(Coordinate);
 }
 
-//UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateRight(FIntPoint Coordinate, int32 Amount = 1)
-//{
-//	Coordinate.Y += Amount;
-//	return GetItemSlotAtCoordinate(Coordinate);
-//}
-//
-//UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateLeft(FIntPoint Coordinate, int32 Amount = 1)
-//{
-//	Coordinate.Y -= Amount;
-//	return GetItemSlotAtCoordinate(Coordinate);
-//}
-//
-//UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateUp(FIntPoint Coordinate, int32 Amount = 1)
-//{
-//	Coordinate.X -= Amount;
-//	return GetItemSlotAtCoordinate(Coordinate);
-//}
-//
-//UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateDown(FIntPoint Coordinate, int32 Amount = 1)
-//{
-//	Coordinate.X += Amount;
-//	return GetItemSlotAtCoordinate(Coordinate);
-//}
-
 void UHBItemContainerWidget::MarkSlots(FIntPoint Coordinate , FIntPoint Size)
 {
-	//for (size_t X = 0; X < Size.X; X++)
-	//{
-	//	for (size_t Y = 0; Y < Size.Y; Y++)
-	//	{
-	//		UHBItemSlotWidget* OffSlot = GetItemSlotAtCoordinateOffset(Coordinate, FIntPoint(X,Y));
-	//		if (OffSlot)
-	//		{
-	//			//UE_LOG(LogTemp, Warning, TEXT("MarkSlots %d"), i);
-	//			OffSlot->SetToDragState();
-	//			DirtMarkedSlots.Add(OffSlot);
-	//		}
-	//	}		
-	//}
-
-
+	for (size_t X = 0; X < Size.X; X++)
+	{
+		for (size_t Y = 0; Y < Size.Y; Y++)
+		{
+			UHBItemSlotWidget* OffSlot = GetItemSlotAtCoordinateOffset(Coordinate, FIntPoint(X,Y));
+			if (OffSlot)
+			{
+				OffSlot->SetToDragState();
+				DirtMarkedSlots.Add(OffSlot);
+			}
+		}		
+	}
 }
 
 void UHBItemContainerWidget::ClearMarkedSlots()
@@ -203,10 +157,10 @@ void UHBItemContainerWidget::ClearMarkedSlots()
 	DirtMarkedSlots.Empty();
 }
 
-UHBItemContainerComponent* UHBItemContainerWidget::GetItemContainerComponent()
-{
-	return ItemContainerComponent;
-}
+//UHBItemContainerComponent* UHBItemContainerWidget::GetItemContainerComponent()
+//{
+//	return ItemContainerComponent;
+//}
 
 
 

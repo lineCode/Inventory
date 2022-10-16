@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Data/HBItemData.h"
 #include "HBItemContainerWidget.generated.h"
 
 /**
@@ -11,8 +12,7 @@
  */
 UCLASS()
 class UHBItemContainerWidget : public UUserWidget 
-{
-	
+{	
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
@@ -20,9 +20,6 @@ class UHBItemContainerWidget : public UUserWidget
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UHBItemSlotWidget> ItemSlotBGSubclass;
-
-	UPROPERTY(EditAnywhere)
-	USoundBase* Sound;
 
 public:
 
@@ -33,40 +30,39 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InitContainer(class UHBItemContainerComponent* InItemContainerComponent);
 
+	UFUNCTION(BlueprintCallable)
+	void RefreshContainerWidget();
 
 	UFUNCTION(BlueprintCallable)
-		void RefreshContainerWidget();
+	void OnItemDeleted(FIntPoint Coordinate);
 
 	UFUNCTION(BlueprintCallable)
-		void OnItemDeleted(FIntPoint Index);
+	void OnItemAdded(FIntPoint Coordinate, FInventoryEntity InventortyEntry);
 
 	UFUNCTION(BlueprintCallable)
-		void OnItemAdded(FIntPoint Index);
+	void OnCountChanged(FIntPoint Coordinate, int32 StackCount);
 
 	UFUNCTION(BlueprintCallable)
-		void OnCountChanged(FIntPoint Index, int32 StackCount);
+	void OnSlotClicked(FIntPoint Index);
 
 	UFUNCTION(BlueprintCallable)
-		void OnSlotClicked(FIntPoint Index);
+	void OnSlotDragEnter(FIntPoint Index, FIntPoint Size);
+
+	UFUNCTION(BlueprintCallable)
+	void OnSlotDragLeave(FIntPoint Index, FIntPoint Size);
+
+	UFUNCTION(BlueprintCallable)
+	void OnSlotDragOnDrop(FIntPoint OldCoordinate, FIntPoint NewCoordinate);
 
 	class UHBItemSlotWidget* GetItemSlotAtCoordinate(FIntPoint Coordinate);
 	class UHBItemSlotWidget* GetItemSlotAtCoordinateOffset(FIntPoint Coordinate, FIntPoint Offset);
-	//class UHBItemSlotWidget* GetItemSlotAtCoordinateRight(FIntPoint Coordinate, int32 Amount);
-	//class UHBItemSlotWidget* GetItemSlotAtCoordinateLeft(FIntPoint Coordinate, int32 Amount);
-	//class UHBItemSlotWidget* GetItemSlotAtCoordinateUp(FIntPoint Coordinate, int32 Amount);
-	//class UHBItemSlotWidget* GetItemSlotAtCoordinateDown(FIntPoint Coordinate, int32 Amount);
-	//
+
 
 	void MarkSlots(FIntPoint Coordinate, FIntPoint Size);
 	void ClearMarkedSlots();
-	TArray<UHBItemSlotWidget*> DirtMarkedSlots;
-
-	TArray<TArray<class UHBItemSlotWidget*>>ItemSlots;
 
 
-	UFUNCTION(BlueprintCallable)
-		UHBItemContainerComponent* GetItemContainerComponent();
-
+private:
 	class UHBItemContainerComponent* ItemContainerComponent;
-
+	TArray<UHBItemSlotWidget*> DirtMarkedSlots;	
 };

@@ -12,85 +12,71 @@
  */
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSlotDelegate, FIntPoint, Index);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSlotDragDelegate, FIntPoint, Index, FIntPoint, Size);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSlotDragOnDropDelegate, FIntPoint, OldIndex, FIntPoint, NewIndex);
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup = UI)
 class INVENTORY_API UHBItemSlotWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* BackgroundImage = nullptr;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* ItemAmountText = nullptr;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UCanvasPanel* MainCanvas = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* DefaultBG = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* DragBG = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UHBItemVisualWidget> ItemVisualSubclass;
 	
 public:
 
 	UHBItemSlotWidget(const FObjectInitializer& ObjectInitializer);
 	virtual void NativeConstruct() override;
 
-	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
-	
-	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	UFUNCTION(BlueprintCallable)
+	void SetItemData(FInventoryEntity NewItemObject);
+	UFUNCTION(BlueprintCallable)
+	void SetSlotEmpty();
 
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
 	virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
 
-
-
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-		class UImage* BackgroundImage = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-		class UTextBlock* ItemAmountText = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-		class UCanvasPanel* MainCanvas = nullptr;
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UTexture2D* DefaultBG = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UTexture2D* DragBG = nullptr;
 
 	void SetToDragState();
 
 	void SetToDefaultState();
 
 	UFUNCTION(BlueprintCallable)
-		void RefreshItemCountText(int32 StackCount); // Change as refreshh
+	void SetItemCountText(int32 StackCount); 
 	
-	UFUNCTION(BlueprintCallable)
-		void SetItemCountText(int32 Count);
+	void SetCoordinate(FIntPoint InCoordinate) { Coordinate = InCoordinate; };
+	
+	FIntPoint GetCoordinate() {	return Coordinate;};
 
-	UFUNCTION(BlueprintCallable)
-		void SetSlotEmpty(bool empty);
-
-	UFUNCTION(BlueprintCallable)
-		void SetItemData(FInventoryEntity NewItemObject);
-
-	////UFUNCTION(BlueprintCallable)
-	////	UHBItemData* GetItemData();
-
-	UFUNCTION(BlueprintCallable)
-	FInventoryEntity GetItemData();
-
-	void SetIndex(int x, int y);
-	FIntPoint GetIndex();
-
-	void OnClick();
-
+	
 	FSlotDelegate OnSlotClicked;
+	FSlotDragDelegate OnSlotDragEnter;
+	FSlotDragDelegate OnSlotDragLeave;
+	FSlotDragOnDropDelegate OnSlotDragOnDrop;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FIntPoint IconScale = { 64,64 }; //TODO will be dynamic may be ui scale
-
-	class UHBItemContainerWidget* ParentContainer;
-
-	FIntPoint Index;
-	FInventoryEntity InventoryEntity;
-
+private:
+	FIntPoint Coordinate;
+	
 	UPROPERTY()
 	class UHBItemVisualWidget* ChildItemVisual;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<class UHBItemVisualWidget> ItemVisualSubclass;
-
+	
+	FInventoryEntity InventoryEntity;
 };

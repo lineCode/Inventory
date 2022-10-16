@@ -9,6 +9,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInventoryBasicDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemSlotChangedDelegate, FIntPoint, Index);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FItemAddedDelegate, FIntPoint, Index, FInventoryEntity, InventoryEntity);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FItemSlotCountChangedDelegate, FIntPoint, Index,int32, StackCount);
 
 class UHBInventoryItemDefinition;
@@ -57,7 +58,7 @@ public:
 	FItemSlotChangedDelegate OnItemDeleted;
 
 	UPROPERTY(BlueprintAssignable)
-	FItemSlotChangedDelegate OnItemAdded;
+	FItemAddedDelegate OnItemAdded;
 
 	UPROPERTY(BlueprintAssignable)
 	FItemSlotCountChangedDelegate OnItemCountChanged;	

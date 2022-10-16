@@ -4,22 +4,18 @@
 #include "UI/HBItemSlotWidget.h"
 #include "UI/HBItemVisualWidget.h"
 #include "UI/DragDrop/HBItemDragDropOperation.h"
-#include "UI/HBItemContainerWidget.h"
-#include "Components/TextBlock.h"
-#include "Data/HBItemData.h"
-#include "Blueprint/WidgetTree.h"
-#include "Components/CanvasPanel.h"
-#include "Components/Image.h"
-#include "Components/CanvasPanelSlot.h"
-#include "HBItemObject.h"
-#include "Component/HBItemContainerComponent.h"
-#include "Manager/HBSoundManager.h"
-#include "Main/HBGameInstance.h"
 #include "Item/HBInventoryItemInstance.h"
+#include "Item/Fragments/HBItemVisualFragment.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Components/CanvasPanel.h"
+#include "Components/TextBlock.h"
+#include "Components/Image.h"
+#include "Blueprint/WidgetTree.h"
 #include "Kismet/GameplayStatics.h"
 
 UHBItemSlotWidget::UHBItemSlotWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+
 }
 
 
@@ -31,47 +27,55 @@ void UHBItemSlotWidget::NativeConstruct()
 	SetVisibility(ESlateVisibility::Visible);
 }
 
+void UHBItemSlotWidget::SetItemData(FInventoryEntity NewItemData)
+{
+	InventoryEntity = NewItemData;
+
+	check(InventoryEntity.StackCount > 0);
+
+	UHBItemVisualWidget* ItemVisual = WidgetTree->ConstructWidget<UHBItemVisualWidget>(ItemVisualSubclass, TEXT("ItemVisualWidget"));
+	MainCanvas->AddChild(ItemVisual);
+	ItemVisual->Init(NewItemData);
+	ChildItemVisual = ItemVisual;
+	SetItemCountText(InventoryEntity.StackCount);
+
+}
+
+void UHBItemSlotWidget::SetSlotEmpty()
+{
+	InventoryEntity = FInventoryEntity();
+	if (ChildItemVisual)
+	{
+		ChildItemVisual->RemoveFromParent();
+	}
+	SetItemCountText(0);
+}
+
+
 FReply UHBItemSlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
-	UE_LOG(LogTemp, Warning, TEXT("Clicked To Slot : %s"), *Index.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("NativeOnMouseButtonDown Clicked To Slot : %s"), *Coordinate.ToString());
 
-	OnSlotClicked.Broadcast(Index);
+	OnSlotClicked.Broadcast(Coordinate);
 	return FReply::Handled();
-}
-
-void UHBItemSlotWidget::OnClick()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Clicked To Slot : %s"), *Index.ToString());
-	OnSlotClicked.Broadcast(Index);
 }
 
 void UHBItemSlotWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
-	//UE_LOG(LogTemp, Warning, TEXT("NativeOnMouseEnter"));
 }
 
 bool UHBItemSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
-	ParentContainer->ClearMarkedSlots();
-	//UHBSoundManager::DoSomething(GetWorld());
-
-	
 
 	UHBItemDragDropOperation* DDOperation = Cast<UHBItemDragDropOperation>(InOperation);
 
-	if (DDOperation->ItemData.StackCount>0)
+	if (DDOperation->ItemData.StackCount > 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("DDOperation->Item"));
-
-		FIntPoint NewIndex = GetIndex();
-		ParentContainer->GetItemContainerComponent()->MoveItem(DDOperation->ItemData.Coordinates, NewIndex);
-		//Cast<UHBGameInstance>(GetGameInstance())->GetSoundManager()->PlayDropSound(DDOperation->ItemData.GetItemType());
-		//ParentContainer->GetItemContainerComponent()->MoveItem(DDOperation->Item, SlotIndex);
-		//UE_LOG(LogTemp, Warning, TEXT("Item named %s at %s moved to %s"), *DDOperation->Item->GetData()->GetItemName().ToString(), *DDOperation->Item->GetItemCoordinates());
-		//*DDOperation->Item->GetData()->GetItemName(), * DDOperation->Item->GetItemCoordinates(), * SlotIndex->ToString()
+		FIntPoint NewIndex = GetCoordinate();
+		OnSlotDragOnDrop.Broadcast(DDOperation->ItemData.Coordinates, NewIndex);
 	}
 
 	return false;
@@ -84,15 +88,25 @@ void UHBItemSlotWidget::NativeOnDragEnter(const FGeometry& InGeometry, const FDr
 
 	if (DDOperation->ItemData.StackCount > 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("NativeOnDragEnter %s"), *GetIndex().ToString());
-		ParentContainer->MarkSlots(GetIndex(), DDOperation->ItemData.Coordinates);
+		const UHBItemVisualFragment* ItemVisualFragment = Cast<UHBItemVisualFragment>(UHBInventoryFunctionLibrary::FindItemDefinitionFragment(DDOperation->ItemData.Instance->GetItemDef(), UHBItemVisualFragment::StaticClass()));
+
+		UE_LOG(LogTemp, Warning, TEXT("NativeOnDragEnter %s"), *GetCoordinate().ToString());
+		OnSlotDragEnter.Broadcast(GetCoordinate(), ItemVisualFragment->SlotSize);
 	}
 }
 
 void UHBItemSlotWidget::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
-	UE_LOG(LogTemp, Warning, TEXT("NativeOnDragLeave %s"), *GetIndex().ToString());
-	ParentContainer->ClearMarkedSlots();
+	UE_LOG(LogTemp, Warning, TEXT("NativeOnDragLeave %s"), *GetCoordinate().ToString());
+
+	UHBItemDragDropOperation* DDOperation = Cast<UHBItemDragDropOperation>(InOperation);
+
+	if (DDOperation->ItemData.StackCount > 0)
+	{
+		const UHBItemVisualFragment* ItemVisualFragment = Cast<UHBItemVisualFragment>(UHBInventoryFunctionLibrary::FindItemDefinitionFragment(DDOperation->ItemData.Instance->GetItemDef(), UHBItemVisualFragment::StaticClass()));
+
+		OnSlotDragLeave.Broadcast(GetCoordinate(), ItemVisualFragment->SlotSize);
+	}
 }
 
 void UHBItemSlotWidget::SetToDragState()
@@ -105,85 +119,16 @@ void UHBItemSlotWidget::SetToDefaultState()
 	BackgroundImage->SetBrushFromTexture(DefaultBG);
 }
 
-void UHBItemSlotWidget::RefreshItemCountText(int32 StackCount)
+void UHBItemSlotWidget::SetItemCountText(int32 StackCount)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UHBItemSlotContainerWidget::SetItemAmountText"));
-	SetItemCountText(StackCount);
-}
-
-void UHBItemSlotWidget::SetItemCountText(int32 Count)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Count %d"), Count);
-	if (Count <= 1)
+	if (StackCount <= 1)
 	{
 		ItemAmountText->SetVisibility(ESlateVisibility::Hidden);
 	}
 	else
 	{
 		ItemAmountText->SetVisibility(ESlateVisibility::Visible);
-		ItemAmountText->SetText(FText::AsCultureInvariant(FString::FromInt(Count)));
-
-		//UHBItemSlotContainerWidget* SlotContainer = WidgetTree->ConstructWidget<UHBItemSlotContainerWidget>(ItemSlotSubclass, TEXT("TEST123"));
-		//MainCanvas->AddChild(SlotContainer);
+		ItemAmountText->SetText(FText::AsCultureInvariant(FString::FromInt(StackCount)));
 	}
 }
 
-
-void UHBItemSlotWidget::SetSlotEmpty(bool empty)
-{
-	if (empty)
-	{
-		//ItemAmountText->SetVisibility(ESlateVisibility::Hidden);
-	}
-	else
-	{
-		//ItemAmountText->SetVisibility(ESlateVisibility::HitTestInvisible);
-		ItemAmountText->SetText(FText::FromString("s"));
-
-	}
-}
-
-void UHBItemSlotWidget::SetItemData(FInventoryEntity NewItemData)
-{
-	InventoryEntity = NewItemData;
-
-	if (InventoryEntity.StackCount <=0 )
-	{
-		if (ChildItemVisual)
-		{
-			ChildItemVisual->RemoveFromParent();
-		}
-		UE_LOG(LogTemp, Warning, TEXT("DDOperation->Item"));
-		SetItemCountText(0);
-		return;
-	}
-
-	UHBItemVisualWidget* ItemVisual = WidgetTree->ConstructWidget<UHBItemVisualWidget>(ItemVisualSubclass, TEXT("ItemVisualWidget"));
-	MainCanvas->AddChild(ItemVisual);
-	ItemVisual->Init(NewItemData);
-	ChildItemVisual = ItemVisual;
-
-	SetItemCountText(InventoryEntity.StackCount);
-
-	
-}
-
-//UHBItemData* UHBItemSlotContainerWidget::GetItemData()
-//{
-//	return ItemObject->GetData();
-//}
-
-FInventoryEntity UHBItemSlotWidget::GetItemData()
-{
-	return InventoryEntity;
-}
-
-void UHBItemSlotWidget::SetIndex(int x, int y)
-{
-	Index = FIntPoint(x,y);
-}
-
-FIntPoint UHBItemSlotWidget::GetIndex()
-{
-	return Index;
-}
