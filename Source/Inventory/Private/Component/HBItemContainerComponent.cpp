@@ -144,8 +144,6 @@ FInventoryEntity UHBItemContainerComponent::FindItemEntryAtIndex(FIntPoint Index
 	return FInventoryEntity();
 }
 
-
-
 UHBInventoryItemInstance* UHBItemContainerComponent::AddEntiry(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition, int32 StackCount, FIntPoint Coordinates)
 {
 	UHBInventoryItemInstance* Result = nullptr;
@@ -218,8 +216,6 @@ void UHBItemContainerComponent::AddItemDef(TSubclassOf<UHBInventoryItemDefinitio
 
 		} while (bFound);
 
-		
-
 	}
 	else
 	{
@@ -263,7 +259,6 @@ TArray<TTuple<FIntPoint, int32>> UHBItemContainerComponent::GetUnfilledStackable
 
 TTuple<FIntPoint, int32> UHBItemContainerComponent::GetAvailableSlotCoordinate(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition, bool& bFound,bool& bIsStack)
 {
-
 	const UHBItemVisualFragment* ItemVisualFragment = Cast<UHBItemVisualFragment>(UHBInventoryFunctionLibrary::FindItemDefinitionFragment(ItemDefinition, UHBItemVisualFragment::StaticClass()));
 	FIntPoint ItemSize = ItemVisualFragment->SlotSize;
 
@@ -308,9 +303,7 @@ void UHBItemContainerComponent::MarkSlotsAvilable(TArray<FIntPoint> SlotCoordina
 {
 	for (FIntPoint SlotCoordinate : SlotCoordinates)
 	{
-		//AvailableSlots[SlotCoordinate.X][SlotCoordinate.Y] = false;
 		AvailableSlots[GetAvailableSlotIndex(SlotCoordinate)] = true;
-
 	}
 
 }

@@ -14,6 +14,7 @@
 
 UHBItemContainerWidget::UHBItemContainerWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+
 }
 
 void UHBItemContainerWidget::NativeConstruct()
@@ -26,9 +27,9 @@ void UHBItemContainerWidget::NativeConstruct()
 
 }
 
-void UHBItemContainerWidget::InitContainer(UHBItemContainerComponent* _ItemContainerComponent)
+void UHBItemContainerWidget::InitContainer(UHBItemContainerComponent* InItemContainerComponent)
 {
-	ItemContainerComponent = _ItemContainerComponent;
+	ItemContainerComponent = InItemContainerComponent;
 
 
 
@@ -45,16 +46,10 @@ void UHBItemContainerWidget::InitContainer(UHBItemContainerComponent* _ItemConta
 		for (size_t j = 0; j < ItemContainerComponent->GetContainerSize().Y; j++)
 		{
 			FString Base = "DragabbleItemSlot";
-			Base.Append(FString::FromInt(i));
-			Base.AppendChar(',');
-			Base.Append(FString::FromInt(j));
-
-			//UHBItemSlotWidget* HBItemSlotWidget = CreateWidget<UHBItemSlotWidget>(this, UHBItemSlotWidget::StaticClass());
-			//UHBItemSlotWidget* HBItemSlotWidget = WidgetTree->ConstructWidget<UHBItemSlotWidget>(ItemSlotSubclass, FName(*Base)); // The second parameter is the name and is optional.
+			Base.Append(FString::FromInt(i)).AppendChar(',').Append(FString::FromInt(j));
 			UHBItemSlotWidget* SlotContainer = WidgetTree->ConstructWidget<UHBItemSlotWidget>(ItemSlotBGSubclass, FName(*Base)/*TEXT("Image")*/); // The second parameter is the name and is optional.
 			SlotContainer->OnSlotClicked.AddDynamic(this, &UHBItemContainerWidget::OnSlotClicked);
 			SlotContainer->ParentContainer = this;
-			//HBItemSlotWidget->
 			SlotGrid->AddChildToUniformGrid(SlotContainer, i, j);
 			SlotContainer->SetIndex(i, j);
 
@@ -155,45 +150,45 @@ UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateOffset(FIntPoi
 	return GetItemSlotAtCoordinate(Coordinate);
 }
 
-UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateRight(FIntPoint Coordinate, int32 Amount = 1)
-{
-	Coordinate.Y += Amount;
-	return GetItemSlotAtCoordinate(Coordinate);
-}
-
-UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateLeft(FIntPoint Coordinate, int32 Amount = 1)
-{
-	Coordinate.Y -= Amount;
-	return GetItemSlotAtCoordinate(Coordinate);
-}
-
-UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateUp(FIntPoint Coordinate, int32 Amount = 1)
-{
-	Coordinate.X -= Amount;
-	return GetItemSlotAtCoordinate(Coordinate);
-}
-
-UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateDown(FIntPoint Coordinate, int32 Amount = 1)
-{
-	Coordinate.X += Amount;
-	return GetItemSlotAtCoordinate(Coordinate);
-}
+//UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateRight(FIntPoint Coordinate, int32 Amount = 1)
+//{
+//	Coordinate.Y += Amount;
+//	return GetItemSlotAtCoordinate(Coordinate);
+//}
+//
+//UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateLeft(FIntPoint Coordinate, int32 Amount = 1)
+//{
+//	Coordinate.Y -= Amount;
+//	return GetItemSlotAtCoordinate(Coordinate);
+//}
+//
+//UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateUp(FIntPoint Coordinate, int32 Amount = 1)
+//{
+//	Coordinate.X -= Amount;
+//	return GetItemSlotAtCoordinate(Coordinate);
+//}
+//
+//UHBItemSlotWidget* UHBItemContainerWidget::GetItemSlotAtCoordinateDown(FIntPoint Coordinate, int32 Amount = 1)
+//{
+//	Coordinate.X += Amount;
+//	return GetItemSlotAtCoordinate(Coordinate);
+//}
 
 void UHBItemContainerWidget::MarkSlots(FIntPoint Coordinate , FIntPoint Size)
 {
-	for (size_t X = 0; X < Size.X; X++)
-	{
-		for (size_t Y = 0; Y < Size.Y; Y++)
-		{
-			UHBItemSlotWidget* OffSlot = GetItemSlotAtCoordinateOffset(Coordinate, FIntPoint(X,Y));
-			if (OffSlot)
-			{
-				//UE_LOG(LogTemp, Warning, TEXT("MarkSlots %d"), i);
-				OffSlot->SetToDragState();
-				DirtMarkedSlots.Add(OffSlot);
-			}
-		}		
-	}
+	//for (size_t X = 0; X < Size.X; X++)
+	//{
+	//	for (size_t Y = 0; Y < Size.Y; Y++)
+	//	{
+	//		UHBItemSlotWidget* OffSlot = GetItemSlotAtCoordinateOffset(Coordinate, FIntPoint(X,Y));
+	//		if (OffSlot)
+	//		{
+	//			//UE_LOG(LogTemp, Warning, TEXT("MarkSlots %d"), i);
+	//			OffSlot->SetToDragState();
+	//			DirtMarkedSlots.Add(OffSlot);
+	//		}
+	//	}		
+	//}
 
 
 }

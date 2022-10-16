@@ -6,6 +6,7 @@
 #include "Components/Image.h"
 #include "UI/DragDrop/HBItemDragVisual.h"
 #include "UI/DragDrop/HBItemDragDropOperation.h"
+#include "UI/HBItemSlotWidget.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Item/HBInventoryItemInstance.h"
 #include "Item/Fragments/HBItemVisualFragment.h"

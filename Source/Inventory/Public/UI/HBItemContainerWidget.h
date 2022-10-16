@@ -10,27 +10,29 @@
  * 
  */
 UCLASS()
-class UHBItemContainerWidget : public UUserWidget
+class UHBItemContainerWidget : public UUserWidget 
 {
+	
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UUniformGridPanel* SlotGrid = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UHBItemSlotWidget> ItemSlotBGSubclass;
+
+	UPROPERTY(EditAnywhere)
+	USoundBase* Sound;
+
 public:
 
 	virtual void NativeConstruct() override;
+	
 	UHBItemContainerWidget(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-		class UUniformGridPanel* SlotGrid = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<class UHBItemSlotWidget> ItemSlotBGSubclass;
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		USoundBase* Sound;
-
-
 	UFUNCTION(BlueprintCallable)
-		void InitContainer(class UHBItemContainerComponent* _ItemContainerComponent);
+	void InitContainer(class UHBItemContainerComponent* InItemContainerComponent);
+
 
 	UFUNCTION(BlueprintCallable)
 		void RefreshContainerWidget();
@@ -49,11 +51,11 @@ public:
 
 	class UHBItemSlotWidget* GetItemSlotAtCoordinate(FIntPoint Coordinate);
 	class UHBItemSlotWidget* GetItemSlotAtCoordinateOffset(FIntPoint Coordinate, FIntPoint Offset);
-	class UHBItemSlotWidget* GetItemSlotAtCoordinateRight(FIntPoint Coordinate, int32 Amount);
-	class UHBItemSlotWidget* GetItemSlotAtCoordinateLeft(FIntPoint Coordinate, int32 Amount);
-	class UHBItemSlotWidget* GetItemSlotAtCoordinateUp(FIntPoint Coordinate, int32 Amount);
-	class UHBItemSlotWidget* GetItemSlotAtCoordinateDown(FIntPoint Coordinate, int32 Amount);
-	
+	//class UHBItemSlotWidget* GetItemSlotAtCoordinateRight(FIntPoint Coordinate, int32 Amount);
+	//class UHBItemSlotWidget* GetItemSlotAtCoordinateLeft(FIntPoint Coordinate, int32 Amount);
+	//class UHBItemSlotWidget* GetItemSlotAtCoordinateUp(FIntPoint Coordinate, int32 Amount);
+	//class UHBItemSlotWidget* GetItemSlotAtCoordinateDown(FIntPoint Coordinate, int32 Amount);
+	//
 
 	void MarkSlots(FIntPoint Coordinate, FIntPoint Size);
 	void ClearMarkedSlots();

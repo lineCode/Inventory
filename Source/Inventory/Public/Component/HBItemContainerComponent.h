@@ -32,16 +32,10 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 
-
-	//UFUNCTION(BlueprintCallable, Category = "Utils")
-	//	bool AddRandomItem(UHBItemData* ItemData);
-
 	//HELPER FUNCTIONS
 
 	//UFUNCTION(BlueprintCallable, Category = "Utils")
 	bool IncreaseEntryStackCount(FInventoryEntity* Entry, int32 CountToAdd);
-
-
 
 	void DeleteItemAtIndex(FIntPoint Index);
 
@@ -50,10 +44,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
 	FIntPoint GetAvailableSlot(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition, bool& found);
-
 	TArray<FIntPoint> GetItemCoordinatesForIndex(FIntPoint NewIndex, FIntPoint Size);
-
-
 	FInventoryEntity FindItemEntryAtIndex(FIntPoint Index);
 	int FindEntryIndexAtCoordinates(FIntPoint Coordinate);
 
@@ -69,16 +60,7 @@ public:
 	FItemSlotChangedDelegate OnItemAdded;
 
 	UPROPERTY(BlueprintAssignable)
-	FItemSlotCountChangedDelegate OnItemCountChanged;
-
-
-
-
-	TArray<bool> AvailableSlots;
-
-	
-
-	bool AvailableSlotsIsDirty = true;
+	FItemSlotCountChangedDelegate OnItemCountChanged;	
 
 	// Lyra
 
@@ -93,13 +75,11 @@ public:
 	
 	void AddItemDefAsNonStackable(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition, int32 StackCount);
 
-	
-
 	TArray<TTuple<FIntPoint, int32>> GetUnfilledStackableSlots(TSubclassOf<UHBInventoryItemDefinition> ItemDef);
-	
-	//UFUNCTION(BlueprintCallable, Category = "Utils")
 	TTuple<FIntPoint, int32> GetAvailableSlotCoordinate(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition, bool& bFound, bool& bIsStack);
 
+
+	TArray<bool> AvailableSlots;
 	void MarkSlotsAvilable(TArray<FIntPoint> SlotCoordinates);
 	void MarkSlotsNonAvilable(TArray<FIntPoint> SlotCoordinates);
 	int GetAvailableSlotIndex(FIntPoint Coordinate);

@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Data/HBItemData.h"
 #include "HBItemVisualWidget.generated.h"
 
+
+class UImage;
 /**
  * 
  */
@@ -13,27 +16,24 @@ UCLASS()
 class INVENTORY_API UHBItemVisualWidget : public UUserWidget
 {
 	GENERATED_BODY()
+	
+	UPROPERTY(meta = (BindWidget))
+	UImage* ItemIcon = nullptr;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FIntPoint IconScale = {64,64}; //TODO will be dynamic
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<class UHBItemDragVisual> ClassOfItemDragVisual;
+	TSubclassOf<class UHBItemDragVisual> ClassOfItemDragVisual;
 
 public:
-	void SetParentSlot(class UHBItemSlotWidget* NewParentSlot); // TODO
-	struct FInventoryEntity GetData();
-	void SetItemIconBrush(UTexture2D* Texture);
+	void Init(FInventoryEntity InInventorEntity);
 
+private:
 	FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)override;
 	FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)override;
 	void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 
 private:
-	UPROPERTY(meta = (BindWidget))
-		class UImage* ItemIcon = nullptr;
+	FInventoryEntity InventorEntity;
 
-	class UHBItemSlotWidget* ParentSlot;
 	
 };

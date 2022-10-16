@@ -16,7 +16,6 @@
 #include "Manager/HBSoundManager.h"
 #include "Main/HBGameInstance.h"
 #include "Item/HBInventoryItemInstance.h"
-#include "Item/Fragments/HBItemVisualFragment.h"
 #include "Kismet/GameplayStatics.h"
 
 UHBItemSlotWidget::UHBItemSlotWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -159,18 +158,14 @@ void UHBItemSlotWidget::SetItemData(FInventoryEntity NewItemData)
 		return;
 	}
 
-	const UHBItemVisualFragment* ItemVisualFragment = Cast<UHBItemVisualFragment>(UHBInventoryFunctionLibrary::FindItemDefinitionFragment(InventoryEntity.Instance->GetItemDef(), UHBItemVisualFragment::StaticClass()));
-
-
-	UHBItemVisualWidget* ItemVisual = WidgetTree->ConstructWidget<UHBItemVisualWidget>(ItemVisualSubclass, TEXT("TEST123"));
-	ItemVisual->SetParentSlot(this);
+	UHBItemVisualWidget* ItemVisual = WidgetTree->ConstructWidget<UHBItemVisualWidget>(ItemVisualSubclass, TEXT("ItemVisualWidget"));
 	MainCanvas->AddChild(ItemVisual);
-
-	FIntPoint ItemSize = ItemVisualFragment->SlotSize;
-	Cast<UCanvasPanelSlot>(ItemVisual->Slot)->SetSize(FVector2D(64 * ItemSize.Y, 64 * ItemSize.X));
-	ItemVisual->SetItemIconBrush(ItemVisualFragment->ItemInventoryImage);
+	ItemVisual->Init(NewItemData);
 	ChildItemVisual = ItemVisual;
+
 	SetItemCountText(InventoryEntity.StackCount);
+
+	
 }
 
 //UHBItemData* UHBItemSlotContainerWidget::GetItemData()

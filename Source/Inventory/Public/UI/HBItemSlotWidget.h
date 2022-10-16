@@ -87,6 +87,7 @@ public:
 	FIntPoint Index;
 	FInventoryEntity InventoryEntity;
 
+	UPROPERTY()
 	class UHBItemVisualWidget* ChildItemVisual;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
