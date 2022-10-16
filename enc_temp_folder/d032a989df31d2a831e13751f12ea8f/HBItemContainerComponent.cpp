@@ -31,7 +31,23 @@ void UHBItemContainerComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 	// ...
 }
 
+void UHBItemContainerComponent::SetContainerSize(FIntPoint NewSize)
+{
 
+	AvailableSlots.Init(true, ContainerSize.X * ContainerSize.Y);
+
+	//ContainerSize = NewSize;
+
+	//for (size_t i = 0; i < ContainerSize.X; i++)
+	//{
+	//	TArray<bool> SlotRow;
+	//	for (size_t j = 0; j < ContainerSize.Y; j++)
+	//	{
+	//		SlotRow.Add(false);
+	//	}
+	//	Slots.Add(SlotRow);
+	//}
+}
 
 bool UHBItemContainerComponent::IncreaseEntryStackCount(FInventoryEntity* Entry, int32 CountToAdd)
 {
@@ -117,7 +133,24 @@ TArray<FIntPoint> UHBItemContainerComponent::GetItemCoordinatesForIndex(FIntPoin
 	return Coordinates;
 }
 
+bool UHBItemContainerComponent::IsCoordinatesAvailable(TArray<FIntPoint> ItemCoordinates)
+{
+	TArray<bool> SlotStatus = AvailableSlots;// = GetAvailableSlots();
 
+	for (FIntPoint Coordinate : ItemCoordinates)
+	{
+		if (!AvailableSlots.IsValidIndex(GetAvailableSlotIndex(Coordinate)))
+		{
+			return false;
+		}
+		if (!AvailableSlots[GetAvailableSlotIndex(Coordinate)])
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
 
 int UHBItemContainerComponent::FindEntryIndexAtCoordinates(FIntPoint Coordinate)
 {
@@ -144,7 +177,15 @@ FInventoryEntity UHBItemContainerComponent::FindItemEntryAtIndex(FIntPoint Index
 	return FInventoryEntity();
 }
 
+FIntPoint UHBItemContainerComponent::GetContainerSize()
+{
+	return ContainerSize;
+}
 
+int UHBItemContainerComponent::GetAvailableSlotIndex(FIntPoint Coordinate)
+{
+	return ContainerSize.Y* Coordinate.X + Coordinate.Y;
+}
 
 UHBInventoryItemInstance* UHBItemContainerComponent::AddEntiry(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition, int32 StackCount, FIntPoint Coordinates)
 {
@@ -227,6 +268,27 @@ void UHBItemContainerComponent::AddItemDef(TSubclassOf<UHBInventoryItemDefinitio
 	}
 }
 
+USoundWave* UHBItemContainerComponent::GetEntrySound(int32 Index)
+{
+	if (Entries.IsValidIndex(Index))
+	{
+		if (Entries[Index].Instance)
+		{
+			const UHBItemVisualFragment* ItemVisualFragment = Cast<UHBItemVisualFragment>(Entries[Index].Instance->FindFragmentByClass(UHBItemVisualFragment::StaticClass()));
+			if (ItemVisualFragment)
+			{
+				return ItemVisualFragment->ItemInventorySound;
+			}
+		}
+	}
+	return nullptr;
+}
+
+//UHBInventoryItemInstance* UHBItemContainerComponent::AddEntiryAsStackable(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition, int32 StackCount)
+//{
+//	return nullptr;
+//}
+//
 void UHBItemContainerComponent::AddItemDefAsNonStackable(TSubclassOf<UHBInventoryItemDefinition>ItemDefinition, int32 StackCount)
 {
 	bool bFound;
@@ -324,36 +386,13 @@ void UHBItemContainerComponent::MarkSlotsNonAvilable(TArray<FIntPoint> SlotCoord
 
 }
 
-int UHBItemContainerComponent::GetAvailableSlotIndex(FIntPoint Coordinate)
-{
-	return ContainerSize.Y * Coordinate.X + Coordinate.Y;
-}
 
-bool UHBItemContainerComponent::IsCoordinatesAvailable(TArray<FIntPoint> ItemCoordinates)
-{
-	TArray<bool> SlotStatus = AvailableSlots;// = GetAvailableSlots();
-
-	for (FIntPoint Coordinate : ItemCoordinates)
-	{
-		if (!AvailableSlots.IsValidIndex(GetAvailableSlotIndex(Coordinate)))
-		{
-			return false;
-		}
-		if (!AvailableSlots[GetAvailableSlotIndex(Coordinate)])
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
-
-void UHBItemContainerComponent::SetContainerSize(FIntPoint NewSize)
-{
-	ContainerSize = NewSize;
-	AvailableSlots.Init(true, ContainerSize.X * ContainerSize.Y);
-}
-FIntPoint UHBItemContainerComponent::GetContainerSize()
-{
-	return ContainerSize;
-}
+//bool UHBItemContainerComponent::IsSlotEmpty(int32 index)
+//{
+//	bool IsEmpty = false;
+//
+//
+//
+//
+//	return IsEmpty;
+//}

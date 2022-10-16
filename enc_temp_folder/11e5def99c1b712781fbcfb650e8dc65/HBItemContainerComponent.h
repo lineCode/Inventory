@@ -31,7 +31,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-
+	UFUNCTION(BlueprintCallable, Category = "Utils")
+		void SetContainerSize(FIntPoint NewSize);
 
 	//UFUNCTION(BlueprintCallable, Category = "Utils")
 	//	bool AddRandomItem(UHBItemData* ItemData);
@@ -53,11 +54,14 @@ public:
 
 	TArray<FIntPoint> GetItemCoordinatesForIndex(FIntPoint NewIndex, FIntPoint Size);
 
+	UFUNCTION(BlueprintCallable, Category = "Utils")
+	bool IsCoordinatesAvailable(TArray<FIntPoint> ItemCoordinates);
 
 	FInventoryEntity FindItemEntryAtIndex(FIntPoint Index);
 	int FindEntryIndexAtCoordinates(FIntPoint Coordinate);
 
-
+	UFUNCTION(BlueprintCallable, Category = "Utils")
+	FIntPoint GetContainerSize();
 
 	UPROPERTY(BlueprintAssignable)
 	FInventoryBasicDelegate InventoryHasChanged;
@@ -72,11 +76,12 @@ public:
 	FItemSlotCountChangedDelegate OnItemCountChanged;
 
 
-
+	UPROPERTY()
+	FIntPoint ContainerSize;
 
 	TArray<bool> AvailableSlots;
 
-	
+	int GetAvailableSlotIndex(FIntPoint Coordinate);
 
 	bool AvailableSlotsIsDirty = true;
 
@@ -102,16 +107,8 @@ public:
 
 	void MarkSlotsAvilable(TArray<FIntPoint> SlotCoordinates);
 	void MarkSlotsNonAvilable(TArray<FIntPoint> SlotCoordinates);
-	int GetAvailableSlotIndex(FIntPoint Coordinate);
-	UFUNCTION(BlueprintCallable, Category = "Utils")
-	bool IsCoordinatesAvailable(TArray<FIntPoint> ItemCoordinates);
 
-	
-	UPROPERTY()
-	FIntPoint ContainerSize;
-	UFUNCTION(BlueprintCallable, Category = "Utils")
-	void SetContainerSize(FIntPoint NewSize);
-	UFUNCTION(BlueprintCallable, Category = "Utils")
-	FIntPoint GetContainerSize();
 
+	UFUNCTION(BlueprintCallable)
+	USoundWave* GetEntrySound(int32 Index);
 };

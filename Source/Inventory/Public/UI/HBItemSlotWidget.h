@@ -61,9 +61,6 @@ public:
 		void SetItemCountText(int32 Count);
 
 	UFUNCTION(BlueprintCallable)
-		void SetItemIconBrush();
-
-	UFUNCTION(BlueprintCallable)
 		void SetSlotEmpty(bool empty);
 
 	UFUNCTION(BlueprintCallable)
@@ -73,7 +70,7 @@ public:
 	////	UHBItemData* GetItemData();
 
 	UFUNCTION(BlueprintCallable)
-		FItemData GetItemData();
+	FInventoryEntity GetItemData();
 
 	void SetIndex(int x, int y);
 	FIntPoint GetIndex();
@@ -88,7 +85,6 @@ public:
 	class UHBItemContainerWidget* ParentContainer;
 
 	FIntPoint Index;
-	FItemData ItemData;
 	FInventoryEntity InventoryEntity;
 
 	class UHBItemVisualWidget* ChildItemVisual;

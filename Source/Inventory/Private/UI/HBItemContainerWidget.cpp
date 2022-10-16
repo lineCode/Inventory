@@ -80,17 +80,17 @@ void UHBItemContainerWidget::InitContainer(UHBItemContainerComponent* _ItemConta
 
 void UHBItemContainerWidget::RefreshContainerWidget()
 {
-	int sizeX = ItemContainerComponent->GetContainerSize().X;
-	int sizeY = ItemContainerComponent->GetContainerSize().Y;
+	//int sizeX = ItemContainerComponent->GetContainerSize().X;
+	//int sizeY = ItemContainerComponent->GetContainerSize().Y;
 
 
-	TArray<FItemData*> Items = ItemContainerComponent->GetItems();
+	//TArray<FItemData*> Items = ItemContainerComponent->GetItems();
 
-	for (size_t i = 0; i < Items.Num(); i++)
-	{
-		FIntPoint Index = Items[i]->GetIndex();
-		//SlotContainers[Index.X][Index.Y]->SetItemData(Items[i]->GetData());
-	}
+	//for (size_t i = 0; i < Items.Num(); i++)
+	//{
+	//	FIntPoint Index = Items[i]->GetIndex();
+	//	//SlotContainers[Index.X][Index.Y]->SetItemData(Items[i]->GetData());
+	//}
 
 }
 
@@ -99,9 +99,9 @@ void UHBItemContainerWidget::OnItemDeleted(FIntPoint Index)
 	FIntPoint Test = Index;
 	if (ItemSlots[Index.X][Index.Y])
 	{
-		FItemData ItemData;
-		ItemData.Count = 0;
-		//ItemSlots[Index.X][Index.Y]->SetItemData(ItemData);
+		FInventoryEntity InventortyEntry;
+		InventortyEntry.StackCount = 0;
+		ItemSlots[Index.X][Index.Y]->SetItemData(InventortyEntry);
 	}
 }
 

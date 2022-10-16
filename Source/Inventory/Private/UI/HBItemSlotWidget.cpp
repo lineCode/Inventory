@@ -63,13 +63,13 @@ bool UHBItemSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
 
 	UHBItemDragDropOperation* DDOperation = Cast<UHBItemDragDropOperation>(InOperation);
 
-	if (DDOperation->ItemData.Count>0)
+	if (DDOperation->ItemData.StackCount>0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("DDOperation->Item"));
 
 		FIntPoint NewIndex = GetIndex();
-		ParentContainer->GetItemContainerComponent()->MoveItem(DDOperation->ItemData.GetIndex(), NewIndex);
-		Cast<UHBGameInstance>(GetGameInstance())->GetSoundManager()->PlayDropSound(DDOperation->ItemData.GetItemType());
+		ParentContainer->GetItemContainerComponent()->MoveItem(DDOperation->ItemData.Coordinates, NewIndex);
+		//Cast<UHBGameInstance>(GetGameInstance())->GetSoundManager()->PlayDropSound(DDOperation->ItemData.GetItemType());
 		//ParentContainer->GetItemContainerComponent()->MoveItem(DDOperation->Item, SlotIndex);
 		//UE_LOG(LogTemp, Warning, TEXT("Item named %s at %s moved to %s"), *DDOperation->Item->GetData()->GetItemName().ToString(), *DDOperation->Item->GetItemCoordinates());
 		//*DDOperation->Item->GetData()->GetItemName(), * DDOperation->Item->GetItemCoordinates(), * SlotIndex->ToString()
@@ -83,10 +83,10 @@ void UHBItemSlotWidget::NativeOnDragEnter(const FGeometry& InGeometry, const FDr
 
 	UHBItemDragDropOperation* DDOperation = Cast<UHBItemDragDropOperation>(InOperation);
 
-	if (DDOperation->ItemData.Count > 0)
+	if (DDOperation->ItemData.StackCount > 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("NativeOnDragEnter %s"), *GetIndex().ToString());
-		ParentContainer->MarkSlots(GetIndex(), DDOperation->ItemData.GetSize());
+		ParentContainer->MarkSlots(GetIndex(), DDOperation->ItemData.Coordinates);
 	}
 }
 
@@ -129,13 +129,6 @@ void UHBItemSlotWidget::SetItemCountText(int32 Count)
 	}
 }
 
-void UHBItemSlotWidget::SetItemIconBrush()
-{
-	if (ChildItemVisual)
-	{
-		ChildItemVisual->SetItemIconBrush(ItemData.GetIcon());
-	}
-}
 
 void UHBItemSlotWidget::SetSlotEmpty(bool empty)
 {
@@ -185,9 +178,9 @@ void UHBItemSlotWidget::SetItemData(FInventoryEntity NewItemData)
 //	return ItemObject->GetData();
 //}
 
-FItemData UHBItemSlotWidget::GetItemData()
+FInventoryEntity UHBItemSlotWidget::GetItemData()
 {
-	return ItemData;
+	return InventoryEntity;
 }
 
 void UHBItemSlotWidget::SetIndex(int x, int y)

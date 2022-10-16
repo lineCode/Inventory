@@ -9,6 +9,8 @@
 #include "Data/HBItemData.h"
 #include "Components/Image.h"
 #include "Manager/HBSoundManager.h"
+#include "Item/HBInventoryItemInstance.h"
+#include "Item/Fragments/HBItemVisualFragment.h"
 #include "Main/HBGameInstance.h"
 
 void UHBItemVisualWidget::SetParentSlot(class UHBItemSlotWidget* NewParentSlot)
@@ -16,7 +18,7 @@ void UHBItemVisualWidget::SetParentSlot(class UHBItemSlotWidget* NewParentSlot)
 	ParentSlot = NewParentSlot;
 }
 
-FItemData UHBItemVisualWidget::GetData()
+FInventoryEntity UHBItemVisualWidget::GetData()
 {
 	return ParentSlot->GetItemData();
 }
@@ -49,8 +51,10 @@ void UHBItemVisualWidget::NativeOnDragDetected(const FGeometry& InGeometry, cons
 
 	if (ItemDragVisual)
 	{
-		FItemData ItemData = GetData();
+		FInventoryEntity ItemData = GetData();
 		//UGameplayStatics::PlaySound2D(GetWorld(), ParentWidget->ParentContainer->Sound, 1, 1);
+
+		const UHBItemVisualFragment* ItemVisualFragment = Cast<UHBItemVisualFragment>(UHBInventoryFunctionLibrary::FindItemDefinitionFragment(ItemData.Instance->GetItemDef(), UHBItemVisualFragment::StaticClass()));
 
 
 		OutOperation = Cast<UHBItemDragDropOperation>(UWidgetBlueprintLibrary::CreateDragDropOperation(UHBItemDragDropOperation::StaticClass()));
@@ -58,9 +62,9 @@ void UHBItemVisualWidget::NativeOnDragDetected(const FGeometry& InGeometry, cons
 		OutOperation->Pivot = EDragPivot::CenterCenter;
 		Cast<UHBItemDragDropOperation>(OutOperation)->ItemData = ItemData;
 		
-		FIntPoint ItemSize = ItemData.GetSize();
+		FIntPoint ItemSize = ItemVisualFragment->SlotSize;
 		ItemDragVisual->SetSize(FVector2D(64 * ItemSize.Y, 64 * ItemSize.X));
-		ItemDragVisual->SetImage(ItemData.GetIcon());
+		ItemDragVisual->SetImage(ItemVisualFragment->ItemInventoryImage);
 		ItemDragVisual->Initialize();
 	}
 }

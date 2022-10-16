@@ -15,6 +15,6 @@ class INVENTORY_API UHBItemDragDropOperation : public UDragDropOperation
 {
 	GENERATED_BODY()
 public:
-	FItemData ItemData;
+	FInventoryEntity ItemData;
 	
 };

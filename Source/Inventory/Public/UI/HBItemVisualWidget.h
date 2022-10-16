@@ -23,7 +23,7 @@ public:
 
 public:
 	void SetParentSlot(class UHBItemSlotWidget* NewParentSlot); // TODO
-	struct FItemData GetData();
+	struct FInventoryEntity GetData();
 	void SetItemIconBrush(UTexture2D* Texture);
 
 	FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)override;
